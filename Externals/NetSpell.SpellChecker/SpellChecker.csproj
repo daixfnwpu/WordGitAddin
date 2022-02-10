@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>NetSpell.SpellChecker</AssemblyName>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net480</TargetFramework>
     <NoWarn>$(NoWarn),1573,1591,1696,1712</NoWarn>
     <LangVersion>latest</LangVersion>
 
