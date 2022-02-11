@@ -36,7 +36,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
-
+    <!--<Reference Include="Microsoft.Offices.Tools" />
+    <Reference Include="Microsoft.Offices.Tools.Common" />
+    <Reference Include="Microsoft.Offices.Tools.Common.v4.0.Utilities" />
+    <Reference Include="Microsoft.Offices.Tools.v4.0.Framework" />
+    <Reference Include="Microsoft.Offices.Tools.Word" />
+    <Reference Include="Microsoft.Offices.Interop.Word" />-->
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)scripts\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>

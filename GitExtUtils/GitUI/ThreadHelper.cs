@@ -61,6 +61,7 @@ namespace GitUI
                 string message = string.Format(CultureInfo.CurrentCulture, "{0} must be called on the UI thread.", callerMemberName);
                 throw new COMException(message, RPC_E_WRONG_THREAD);
             }
+            
         }
 
         [Conditional("DEBUG")]

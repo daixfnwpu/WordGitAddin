@@ -224,6 +224,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BugReporter.IntegrationTests", "IntegrationTests\BugReporter.IntegrationTests\BugReporter.IntegrationTests.csproj", "{7695AF7E-99B3-4B3A-8588-AC9ABD378293}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGitAddin", "WordGitAddin\WordGitAddin.csproj", "{415063CA-6618-4C7B-8BCE-2BAFCC99BC67}"
+	ProjectSection(ProjectDependencies) = postProject
+		{27559302-F35E-4B62-A6EC-11FF21A5FA6F} = {27559302-F35E-4B62-A6EC-11FF21A5FA6F}
+		{0F1F1168-A4B2-4FA2-B17B-735140D17F39} = {0F1F1168-A4B2-4FA2-B17B-735140D17F39}
+		{BD6AA2A2-997D-4AFF-ACC7-B64F6E51D181} = {BD6AA2A2-997D-4AFF-ACC7-B64F6E51D181}
+		{CF5B22E7-230F-4E50-BE88-C4F7023CED2C} = {CF5B22E7-230F-4E50-BE88-C4F7023CED2C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

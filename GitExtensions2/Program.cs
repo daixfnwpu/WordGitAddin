@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GitCommands;
 using GitCommands.Utils;
 using GitExtUtils.GitUI;
 using GitUI;
-using GitUI.CommandsDialogs;
 using GitUI.CommandsDialogs.SettingsDialog;
 using GitUI.CommandsDialogs.SettingsDialog.Pages;
 using GitUI.Infrastructure.Telemetry;
@@ -25,28 +16,18 @@ using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-namespace WordGitAddin.Controls
+namespace GitExtensions
 {
-    public partial class WordGitPanel : UserControl
+    internal static class Program
     {
-        public WordGitPanel()
-        {
-            InitializeComponent();
-        }
-
-        public void EmbedForm(Form frm)
-        {
-            frm.TopLevel = false;
-            frm.FormBorderStyle = FormBorderStyle.None;
-            frm.Visible = true;
-            frm.Dock = DockStyle.Fill;   // optional
-            this.Controls.Add(frm);
-        }
-
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
-        private void InitGitExtentsions()
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        private static void Main()
         {
             if (Environment.OSVersion.Version.Major >= 6)
             {
@@ -54,16 +35,20 @@ namespace WordGitAddin.Controls
             }
 
             Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            // UserEnvironmentInformation.Initialise(ThisAssembly.Git.Sha, ThisAssembly.Git.IsDirty);
+            Application.SetCompatibleTextRenderingDefault(false);
 
-            //AppSettings.SetDocumentationBaseUrl(ThisAssembly.Git.Branch);
-            //ThemeModule.Load();
+            // If an error happens before we had a chance to init the environment information
+            // the call to GetInformation() from BugReporter.ShowNBug() will fail.
+            // There's no perf hit calling Initialise() multiple times.
+            UserEnvironmentInformation.Initialise(ThisAssembly.Git.Sha, ThisAssembly.Git.IsDirty);
+
+            AppSettings.SetDocumentationBaseUrl(ThisAssembly.Git.Branch);
+
+            ThemeModule.Load();
             Application.ApplicationExit += (s, e) => ThemeModule.Unload();
 
             SystemEvents.UserPreferenceChanged += (s, e) =>
             {
-
                 // Whenever a user changes monitor scaling (e.g. 100%->125%) unload and
                 // reload the theme, and repaint all forms
                 if (e.Category == UserPreferenceCategory.Desktop || e.Category == UserPreferenceCategory.VisualStyle)
@@ -78,14 +63,45 @@ namespace WordGitAddin.Controls
 
             HighDpiMouseCursors.Enable();
 
+            try
+            {
+                DiagnosticsClient.Initialize(ThisAssembly.Git.IsDirty);
+
+                if (!Debugger.IsAttached)
+                {
+                    AppDomain.CurrentDomain.UnhandledException += (s, e) => BugReportInvoker.Report((Exception)e.ExceptionObject, e.IsTerminating);
+                    Application.ThreadException += (s, e) => BugReportInvoker.Report(e.Exception, isTerminating: false);
+                }
+            }
+            catch (TypeInitializationException tie)
+            {
+                // is this exception caused by the configuration?
+                if (tie.InnerException is not null
+                    && tie.InnerException.GetType()
+                        .IsSubclassOf(typeof(ConfigurationException)))
+                {
+                    HandleConfigurationException((ConfigurationException)tie.InnerException);
+                }
+            }
+
+            AppTitleGenerator.Initialise(ThisAssembly.Git.Sha, ThisAssembly.Git.Branch);
+
+            // NOTE we perform the rest of the application's startup in another method to defer
+            // the JIT processing more types than required to configure NBug.
+            // In this way, there's more chance we can handle startup exceptions correctly.
+            RunApplication();
         }
 
-        protected override void OnLoad(EventArgs e)
+        private static void RunApplication()
         {
-            base.OnLoad(e);
-            InitGitExtentsions();
-            ThreadHelper.JoinableTaskContext = new JoinableTaskContext();
+            string[] args = Environment.GetCommandLineArgs();
 
+            // This form created to obtain UI synchronization context only
+            using (new Form())
+            {
+                // Store the shared JoinableTaskContext
+                ThreadHelper.JoinableTaskContext = new JoinableTaskContext();
+            }
 
             AppSettings.LoadSettings();
 
@@ -113,32 +129,33 @@ namespace WordGitAddin.Controls
                 // Ensure we can find the git command to execute,
                 // unless we are being instructed to uninstall,
                 // or AppSettings.CheckSettings is set to false.
-
-                if (!CheckSettingsLogic.SolveGitCommand())
+                if (!(args.Length >= 2 && args[1] == "uninstall"))
                 {
-                    if (!LocateMissingGit())
+                    if (!CheckSettingsLogic.SolveGitCommand())
                     {
-                        Environment.Exit(-1);
-                        return;
-                    }
-                }
-
-                if (AppSettings.CheckSettings)
-                {
-                    var uiCommands = new GitUICommands("");
-                    var commonLogic = new CommonLogic(uiCommands.Module);
-                    var checkSettingsLogic = new CheckSettingsLogic(commonLogic);
-                    var fakePageHost = new SettingsPageHostMock(checkSettingsLogic);
-                    using var checklistSettingsPage = SettingsPageBase.Create<ChecklistSettingsPage>(fakePageHost);
-                    if (!checklistSettingsPage.CheckSettings())
-                    {
-                        if (!checkSettingsLogic.AutoSolveAllSettings())
+                        if (!LocateMissingGit())
                         {
-                            uiCommands.StartSettingsDialog();
+                            Environment.Exit(-1);
+                            return;
+                        }
+                    }
+
+                    if (AppSettings.CheckSettings)
+                    {
+                        var uiCommands = new GitUICommands("");
+                        var commonLogic = new CommonLogic(uiCommands.Module);
+                        var checkSettingsLogic = new CheckSettingsLogic(commonLogic);
+                        var fakePageHost = new SettingsPageHostMock(checkSettingsLogic);
+                        using var checklistSettingsPage = SettingsPageBase.Create<ChecklistSettingsPage>(fakePageHost);
+                        if (!checklistSettingsPage.CheckSettings())
+                        {
+                            if (!checkSettingsLogic.AutoSolveAllSettings())
+                            {
+                                uiCommands.StartSettingsDialog();
+                            }
                         }
                     }
                 }
-
             }
             catch
             {
@@ -149,45 +166,28 @@ namespace WordGitAddin.Controls
             {
                 MouseWheelRedirector.Active = true;
             }
-            var args = new string[1] { "" };
+
             var commands = new GitUICommands(GetWorkingDir(args));
 
+            if (args.Length <= 1)
+            {
+                commands.StartBrowseDialog();
+            }
+            else
+            {
+                // if we are here args.Length > 1
 
-            // commands.StartBrowseDialog();
-            var formBrowser = new FormBrowse(commands, "");
-            EmbedForm(formBrowser);
-
-
+                // Avoid replacing the ExitCode eventually set while parsing arguments,
+                // i.e. assume -1 and afterwards, only set it to 0 if no error is indicated.
+                Environment.ExitCode = -1;
+                if (commands.RunCommand(args))
+                {
+                    Environment.ExitCode = 0;
+                }
+            }
 
             AppSettings.SaveSettings();
-
-            //GitUIExtensions.UISynchronizationContext = SynchronizationContext.Current;
-            //GitUICommands uiCommands = new GitUICommands(string.Empty);
-            //var commonLogic = new CommonLogic(uiCommands.Module);
-            //var checkSettingsLogic = new CheckSettingsLogic(commonLogic, uiCommands.Module);
-            //using (var checklistSettingsPage = new ChecklistSettingsPage(commonLogic, checkSettingsLogic, uiCommands.Module, null))
-            //{
-            //    if (!checklistSettingsPage.CheckSettings())
-            //    {
-            //        checkSettingsLogic.AutoSolveAllSettings();
-            //        uiCommands.StartSettingsDialog();
-            //    }
-            //}
-            //string[] cmdArgs = Environment.GetCommandLineArgs();
-            //GitUICommands uCommands = new GitUICommands(GetWorkingDir(cmdArgs));
-
-            // uCommands.StartBrowseDialog();
-
-
-            //  var formBrowser = new FormBrowse(uCommands, "");
-            //  Application.Run(form);
-
-            // InvokeEvent(owner, PostBrowse);
-            //Application.Run(formBrowser);
-            // EmbedForm(formBrowser);
-
         }
-
 
         private static string? GetWorkingDir(string[] args)
         {
@@ -368,6 +368,5 @@ namespace WordGitAddin.Controls
                     }
             }
         }
-
     }
 }

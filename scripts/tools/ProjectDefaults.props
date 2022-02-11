@@ -36,17 +36,13 @@
       kept as minimal as possible to make our build reliable from machine to machine.  Global
       locations such as GAC, AssemblyFoldersEx, etc ... are deliberately removed from this 
       list as they will not be the same from machine to machine.
-    -->
     <AssemblySearchPaths>
       {HintPathFromItem};
       {TargetFrameworkDirectory};
       {RawFileName};
     </AssemblySearchPaths>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Language Condition="'$(MSBuildProjectExtension)' == '.csproj'">C#</Language>
-    <Language Condition="'$(MSBuildProjectExtension)' == '.vbproj'">VB</Language>
+    -->
+  <Language Condition="'$(MSBuildProjectExtension)' == '.vbproj'">VB</Language>
     <Language Condition="'$(MSBuildProjectExtension)' == '.fsproj'">F#</Language>
     <Language Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">C++</Language>
   </PropertyGroup>
