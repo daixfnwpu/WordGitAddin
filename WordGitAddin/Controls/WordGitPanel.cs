@@ -34,13 +34,14 @@ namespace WordGitAddin.Controls
             InitializeComponent();
         }
 
-        public void EmbedForm(Form frm)
+        public void EmbedForm(FormBrowse frm)
         {
             frm.TopLevel = false;
             frm.FormBorderStyle = FormBorderStyle.None;
             frm.Visible = true;
             frm.Dock = DockStyle.Fill;   // optional
-            this.Controls.Add(frm);
+            Controls.Add(frm);
+            frm.Show();
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -59,7 +60,7 @@ namespace WordGitAddin.Controls
 
             //AppSettings.SetDocumentationBaseUrl(ThisAssembly.Git.Branch);
             //ThemeModule.Load();
-            Application.ApplicationExit += (s, e) => ThemeModule.Unload();
+            //Application.ApplicationExit += (s, e) => ThemeModule.Unload();
 
             SystemEvents.UserPreferenceChanged += (s, e) =>
             {
@@ -85,8 +86,6 @@ namespace WordGitAddin.Controls
             base.OnLoad(e);
             InitGitExtentsions();
             ThreadHelper.JoinableTaskContext = new JoinableTaskContext();
-
-
             AppSettings.LoadSettings();
 
             if (EnvUtils.RunningOnWindows())
@@ -144,7 +143,7 @@ namespace WordGitAddin.Controls
             {
                 // TODO: remove catch-all
             }
-
+            AppSettings.SaveSettings();
             if (EnvUtils.RunningOnWindows())
             {
                 MouseWheelRedirector.Active = true;
@@ -152,42 +151,11 @@ namespace WordGitAddin.Controls
             var args = new string[1] { "" };
             var commands = new GitUICommands(GetWorkingDir(args));
 
-
             // commands.StartBrowseDialog();
             var formBrowser = new FormBrowse(commands, "");
             EmbedForm(formBrowser);
 
-
-
-            AppSettings.SaveSettings();
-
-            //GitUIExtensions.UISynchronizationContext = SynchronizationContext.Current;
-            //GitUICommands uiCommands = new GitUICommands(string.Empty);
-            //var commonLogic = new CommonLogic(uiCommands.Module);
-            //var checkSettingsLogic = new CheckSettingsLogic(commonLogic, uiCommands.Module);
-            //using (var checklistSettingsPage = new ChecklistSettingsPage(commonLogic, checkSettingsLogic, uiCommands.Module, null))
-            //{
-            //    if (!checklistSettingsPage.CheckSettings())
-            //    {
-            //        checkSettingsLogic.AutoSolveAllSettings();
-            //        uiCommands.StartSettingsDialog();
-            //    }
-            //}
-            //string[] cmdArgs = Environment.GetCommandLineArgs();
-            //GitUICommands uCommands = new GitUICommands(GetWorkingDir(cmdArgs));
-
-            // uCommands.StartBrowseDialog();
-
-
-            //  var formBrowser = new FormBrowse(uCommands, "");
-            //  Application.Run(form);
-
-            // InvokeEvent(owner, PostBrowse);
-            //Application.Run(formBrowser);
-            // EmbedForm(formBrowser);
-
         }
-
 
         private static string? GetWorkingDir(string[] args)
         {

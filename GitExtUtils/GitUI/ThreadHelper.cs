@@ -13,7 +13,10 @@ namespace GitUI
 {
     public static class ThreadHelper
     {
+// #pragma warning disable SA1139 // Use literal suffix notation instead of casting
         private const int RPC_E_WRONG_THREAD = unchecked((int)0x8001010E);
+// #pragma warning restore SA1139 // Use literal suffix notation instead of casting
+
         private static JoinableTaskContext _joinableTaskContext = null!;
         private static JoinableTaskCollection _joinableTaskCollection = null!;
         private static JoinableTaskFactory _joinableTaskFactory = null!;
@@ -61,7 +64,6 @@ namespace GitUI
                 string message = string.Format(CultureInfo.CurrentCulture, "{0} must be called on the UI thread.", callerMemberName);
                 throw new COMException(message, RPC_E_WRONG_THREAD);
             }
-            
         }
 
         [Conditional("DEBUG")]
@@ -97,7 +99,9 @@ namespace GitUI
                 {
                     try
                     {
+// #pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks (As a fire-and-forget continuation, deadlocks can't happen.)
                         await task.ConfigureAwait(false);
+// #pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
                     }
                     catch (OperationCanceledException)
                     {
@@ -116,6 +120,13 @@ namespace GitUI
             await _joinableTaskCollection.JoinTillEmptyAsync(cancellationToken);
         }
 
+        public static void JoinPendingOperations()
+        {
+            // Note that JoinableTaskContext.Factory must be used to bypass the default behavior of JoinableTaskFactory
+            // since the latter adds new tasks to the collection and would therefore never complete.
+            JoinableTaskContext.Factory.Run(_joinableTaskCollection.JoinTillEmptyAsync);
+        }
+
         public static T CompletedResult<T>(this Task<T> task)
         {
             if (!task.IsCompleted)
@@ -123,7 +134,9 @@ namespace GitUI
                 throw new InvalidOperationException();
             }
 
+// #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             return task.Result;
+// #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
         }
 
         public static T? CompletedOrDefault<T>(this Task<T> task)
@@ -132,8 +145,14 @@ namespace GitUI
             {
                 return default;
             }
+            else
+            {
+                // #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
+                return task.Result; //.Result;
+                // #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+            }
 
-            return task.Result;
         }
     }
 }
+

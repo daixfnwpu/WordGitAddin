@@ -20,7 +20,7 @@ namespace GitUI
 
             _controlDisposed = new ConditionalWeakTable<IComponent, StrongBox<CancellationToken>>();
         }
-
+#pragma warning disable VSTHRD004
         public static ControlMainThreadAwaitable SwitchToMainThreadAsync(this ToolStripItem control, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -68,7 +68,7 @@ namespace GitUI
             var mainThreadAwaiter = ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(disposedCancellationToken);
             return new ControlMainThreadAwaitable(mainThreadAwaiter, cancellationTokenSource);
         }
-
+#pragma warning disable VSTHRD004
         public readonly struct ControlMainThreadAwaitable
         {
             private readonly JoinableTaskFactory.MainThreadAwaitable _awaitable;
