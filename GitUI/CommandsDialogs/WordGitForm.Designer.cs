@@ -20,7 +20,7 @@ namespace GitUI.CommandsDialogs
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.repoObjectsTree = new GitUI.BranchTreePanel.RepoObjectsTree();
             this.RightSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.RevisionsSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.RevisionsSplitContainer = new System.Windows.Forms.ContainerControl();
             this.RevisionGridContainer = new System.Windows.Forms.Panel();
             this.RevisionGrid = new GitUI.RevisionGridControl();
             this.notificationBarBisectInProgress = new GitUI.UserControls.InteractiveGitActionControl();
@@ -52,8 +52,7 @@ namespace GitUI.CommandsDialogs
             this.RightSplitContainer.Panel1.SuspendLayout();
             this.RightSplitContainer.Panel2.SuspendLayout();
             this.RightSplitContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.RevisionsSplitContainer)).BeginInit();
-            this.RevisionsSplitContainer.Panel1.SuspendLayout();
+            this.RevisionsSplitContainer.SuspendLayout();
             this.RevisionsSplitContainer.SuspendLayout();
             this.RevisionGridContainer.SuspendLayout();
             this.CommitInfoTabControl.SuspendLayout();
@@ -134,23 +133,18 @@ namespace GitUI.CommandsDialogs
             this.RightSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.RightSplitContainer.Panel1.Controls.Add(this.RevisionsSplitContainer);
             this.RightSplitContainer.Panel2.Controls.Add(this.CommitInfoTabControl);
-            this.RightSplitContainer.Panel2MinSize = 0;
+            this.RightSplitContainer.Panel2MinSize = 200;
             this.RightSplitContainer.Size = new System.Drawing.Size(650, 502);
             this.RightSplitContainer.SplitterDistance = 209;
             this.RightSplitContainer.SplitterWidth = 6;
             this.RightSplitContainer.TabIndex = 1;
             this.RightSplitContainer.TabStop = false;
             this.RevisionsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RevisionsSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.RevisionsSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.RevisionsSplitContainer.Margin = new System.Windows.Forms.Padding(0);
             this.RevisionsSplitContainer.Name = "RevisionsSplitContainer";
-            this.RevisionsSplitContainer.Panel1.Padding = new System.Windows.Forms.Padding(1);
-            this.RevisionsSplitContainer.Panel2.Padding = new System.Windows.Forms.Padding(1);
-            this.RevisionsSplitContainer.Size = new System.Drawing.Size(650, 209);
-            this.RevisionsSplitContainer.SplitterDistance = 350;
-            this.RevisionsSplitContainer.SplitterWidth = 6;
-            this.RevisionsSplitContainer.Panel1.Controls.Add(this.RevisionGridContainer);
+            this.RevisionsSplitContainer.Padding = new System.Windows.Forms.Padding(1);
+            this.RevisionsSplitContainer.Controls.Add(this.RevisionGridContainer);
             this.RevisionsSplitContainer.TabIndex = 0;
             this.RevisionGridContainer.Controls.Add(this.RevisionGrid);
             this.RevisionGridContainer.Controls.Add(this.notificationBarBisectInProgress);
@@ -292,8 +286,7 @@ namespace GitUI.CommandsDialogs
             this.RightSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.RightSplitContainer)).EndInit();
             this.RightSplitContainer.ResumeLayout(false);
-            this.RevisionsSplitContainer.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.RevisionsSplitContainer)).EndInit();
+            this.RevisionsSplitContainer.ResumeLayout(false);
             this.RevisionsSplitContainer.ResumeLayout(false);
             this.RevisionGridContainer.ResumeLayout(false);
             this.CommitInfoTabControl.ResumeLayout(false);
@@ -314,7 +307,7 @@ namespace GitUI.CommandsDialogs
 
         internal SplitContainer MainSplitContainer;
         private SplitContainer RightSplitContainer;
-        private SplitContainer RevisionsSplitContainer;
+        private ContainerControl RevisionsSplitContainer;
 
         private FullBleedTabControl CommitInfoTabControl;
         private TabPage DiffTabPage;

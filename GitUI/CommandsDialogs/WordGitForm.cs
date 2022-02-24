@@ -387,8 +387,7 @@ namespace GitUI.CommandsDialogs
             void WorkaroundPaddingIncreaseBug()
             {
                 MainSplitContainer.Panel1.Padding = new Padding(1);
-                RevisionsSplitContainer.Panel1.Padding = new Padding(1);
-                RevisionsSplitContainer.Panel2.Padding = new Padding(1);
+                RevisionsSplitContainer.Padding = new Padding(1);
             }
         }
 
@@ -1845,7 +1844,6 @@ namespace GitUI.CommandsDialogs
 
         private void SetSplitterPositions()
         {
-            _splitterManager.AddSplitter(RevisionsSplitContainer, nameof(RevisionsSplitContainer));
             _splitterManager.AddSplitter(MainSplitContainer, nameof(MainSplitContainer));
             _splitterManager.AddSplitter(RightSplitContainer, nameof(RightSplitContainer));
 
