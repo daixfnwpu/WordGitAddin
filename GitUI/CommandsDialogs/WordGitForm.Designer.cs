@@ -33,7 +33,7 @@ namespace GitUI.CommandsDialogs
             //this.commitInfoLeftwardMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             //this.commitInfoRightwardMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             //this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonLevelUp = new System.Windows.Forms.ToolStripSplitButton();
+            //this.toolStripButtonLevelUp = new System.Windows.Forms.ToolStripSplitButton();
             this._NO_TRANSLATE_WorkingDir = new System.Windows.Forms.ToolStripSplitButton();
             this.branchSelect = new System.Windows.Forms.ToolStripSplitButton();
             //this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -55,7 +55,7 @@ namespace GitUI.CommandsDialogs
             //this.toolStripButtonPush = new GitUI.CommandsDialogs.ToolStripPushButton();
             //this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             //this.toolStripFileExplorer = new System.Windows.Forms.ToolStripButton();
-            this.userShell = new System.Windows.Forms.ToolStripSplitButton();
+            //this.userShell = new System.Windows.Forms.ToolStripSplitButton();
             //this.EditSettings = new System.Windows.Forms.ToolStripButton();
             //this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             //this.toolStripBranchFilterComboBox = new System.Windows.Forms.ToolStripComboBox();
@@ -74,13 +74,13 @@ namespace GitUI.CommandsDialogs
             this.notificationBarBisectInProgress = new GitUI.UserControls.InteractiveGitActionControl();
             this.notificationBarGitActionInProgress = new GitUI.UserControls.InteractiveGitActionControl();
             this.CommitInfoTabControl = new GitUI.CommandsDialogs.FullBleedTabControl();
-            this.CommitInfoTabPage = new System.Windows.Forms.TabPage();
+           // this.CommitInfoTabPage = new System.Windows.Forms.TabPage();
             this.RevisionInfo = new GitUI.CommitInfo.CommitInfo();
             this.TreeTabPage = new System.Windows.Forms.TabPage();
             this.fileTree = new GitUI.CommandsDialogs.RevisionFileTreeControl();
             this.DiffTabPage = new System.Windows.Forms.TabPage();
             this.revisionDiff = new GitUI.CommandsDialogs.RevisionDiffControl();
-            this.GpgInfoTabPage = new System.Windows.Forms.TabPage();
+            //this.GpgInfoTabPage = new System.Windows.Forms.TabPage();
             this.revisionGpgInfo1 = new GitUI.CommandsDialogs.RevisionGpgInfoControl();
             this.FilterToolTip = new System.Windows.Forms.ToolTip(this.components);
             //this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +98,7 @@ namespace GitUI.CommandsDialogs
             //this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             //this.refreshDashboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             //this.fileExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.repositoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            //this.repositoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             //this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             //this.manageRemoteRepositoriesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             //this.toolStripSeparator43 = new System.Windows.Forms.ToolStripSeparator();
@@ -212,10 +212,10 @@ namespace GitUI.CommandsDialogs
             this.RevisionsSplitContainer.SuspendLayout();
             this.RevisionGridContainer.SuspendLayout();
             this.CommitInfoTabControl.SuspendLayout();
-            this.CommitInfoTabPage.SuspendLayout();
+            //this.CommitInfoTabPage.SuspendLayout();
             this.TreeTabPage.SuspendLayout();
             this.DiffTabPage.SuspendLayout();
-            this.GpgInfoTabPage.SuspendLayout();
+           // this.GpgInfoTabPage.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gitItemBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gitRevisionBindingSource)).BeginInit();
@@ -256,7 +256,7 @@ namespace GitUI.CommandsDialogs
             //this.toggleSplitViewLayout,
             //this.menuCommitInfoPosition,
             //this.toolStripSeparator17,
-            this.toolStripButtonLevelUp,
+            //this.toolStripButtonLevelUp,
             this._NO_TRANSLATE_WorkingDir,
             this.branchSelect,
             //this.toolStripSeparator1,
@@ -266,7 +266,7 @@ namespace GitUI.CommandsDialogs
             //this.toolStripSplitStash,
             //this.toolStripSeparator2,
             //this.toolStripFileExplorer,
-            this.userShell,
+            //this.userShell,
             //this.EditSettings
             });
             this.ToolStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
@@ -381,14 +381,14 @@ namespace GitUI.CommandsDialogs
             //toolStripButtonLevelUp
 
 
-            this.toolStripButtonLevelUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonLevelUp.Image = global::GitUI.Properties.Images.SubmodulesManage;
-            this.toolStripButtonLevelUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonLevelUp.Name = "toolStripButtonLevelUp";
-            this.toolStripButtonLevelUp.Size = new System.Drawing.Size(32, 22);
-            this.toolStripButtonLevelUp.ToolTipText = "Submodules";
-            this.toolStripButtonLevelUp.ButtonClick += new System.EventHandler(this.toolStripButtonLevelUp_ButtonClick);
-            this.toolStripButtonLevelUp.DropDownOpening += new System.EventHandler(this.toolStripButtonLevelUp_DropDownOpening);
+            //this.toolStripButtonLevelUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            //this.toolStripButtonLevelUp.Image = global::GitUI.Properties.Images.SubmodulesManage;
+            //this.toolStripButtonLevelUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            //this.toolStripButtonLevelUp.Name = "toolStripButtonLevelUp";
+            //this.toolStripButtonLevelUp.Size = new System.Drawing.Size(32, 22);
+            //this.toolStripButtonLevelUp.ToolTipText = "Submodules";
+            //this.toolStripButtonLevelUp.ButtonClick += new System.EventHandler(this.toolStripButtonLevelUp_ButtonClick);
+            //this.toolStripButtonLevelUp.DropDownOpening += new System.EventHandler(this.toolStripButtonLevelUp_DropDownOpening);
 
             // _NO_TRANSLATE_WorkingDir
             // 
@@ -594,12 +594,12 @@ namespace GitUI.CommandsDialogs
             // 
             // userShell
             // 
-            this.userShell.Image = global::GitUI.Properties.Images.GitForWindows;
-            this.userShell.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.userShell.Name = "userShell";
-            this.userShell.Size = new System.Drawing.Size(23, 22);
-            this.userShell.ToolTipText = "Git bash";
-            this.userShell.Click += new System.EventHandler(this.userShell_Click);
+            //this.userShell.Image = global::GitUI.Properties.Images.GitForWindows;
+            //this.userShell.ImageTransparentColor = System.Drawing.Color.Magenta;
+            //this.userShell.Name = "userShell";
+            //this.userShell.Size = new System.Drawing.Size(23, 22);
+            //this.userShell.ToolTipText = "Git bash";
+            //this.userShell.Click += new System.EventHandler(this.userShell_Click);
             //// 
             //// EditSettings
             //// 
@@ -791,10 +791,10 @@ namespace GitUI.CommandsDialogs
             // 
             // CommitInfoTabControl
             // 
-            this.CommitInfoTabControl.Controls.Add(this.CommitInfoTabPage);
+            //this.CommitInfoTabControl.Controls.Add(this.CommitInfoTabPage);
             this.CommitInfoTabControl.Controls.Add(this.DiffTabPage);
             this.CommitInfoTabControl.Controls.Add(this.TreeTabPage);
-            this.CommitInfoTabControl.Controls.Add(this.GpgInfoTabPage);
+           // this.CommitInfoTabControl.Controls.Add(this.GpgInfoTabPage);
             this.CommitInfoTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CommitInfoTabControl.Location = new System.Drawing.Point(0, 0);
             this.CommitInfoTabControl.Margin = new System.Windows.Forms.Padding(0);
@@ -807,14 +807,14 @@ namespace GitUI.CommandsDialogs
             // 
             // CommitInfoTabPage
             // 
-            this.CommitInfoTabPage.Controls.Add(this.RevisionInfo);
-            this.CommitInfoTabPage.Location = new System.Drawing.Point(1, 21);
-            this.CommitInfoTabPage.Margin = new System.Windows.Forms.Padding(0);
-            this.CommitInfoTabPage.Name = "CommitInfoTabPage";
-            this.CommitInfoTabPage.Size = new System.Drawing.Size(646, 264);
-            this.CommitInfoTabPage.TabIndex = 2;
-            this.CommitInfoTabPage.Text = "Commit";
-            this.CommitInfoTabPage.UseVisualStyleBackColor = true;
+            //this.CommitInfoTabPage.Controls.Add(this.RevisionInfo);
+            //this.CommitInfoTabPage.Location = new System.Drawing.Point(1, 21);
+            //this.CommitInfoTabPage.Margin = new System.Windows.Forms.Padding(0);
+            //this.CommitInfoTabPage.Name = "CommitInfoTabPage";
+            //this.CommitInfoTabPage.Size = new System.Drawing.Size(646, 264);
+            //this.CommitInfoTabPage.TabIndex = 2;
+            //this.CommitInfoTabPage.Text = "Commit";
+            //this.CommitInfoTabPage.UseVisualStyleBackColor = true;
             // 
             // RevisionInfo
             // 
@@ -871,24 +871,24 @@ namespace GitUI.CommandsDialogs
             // 
             // GpgInfoTabPage
             // 
-            this.GpgInfoTabPage.Controls.Add(this.revisionGpgInfo1);
-            this.GpgInfoTabPage.Location = new System.Drawing.Point(1, 21);
-            this.GpgInfoTabPage.Margin = new System.Windows.Forms.Padding(0);
-            this.GpgInfoTabPage.Name = "GpgInfoTabPage";
-            this.GpgInfoTabPage.Size = new System.Drawing.Size(646, 264);
-            this.GpgInfoTabPage.TabIndex = 3;
-            this.GpgInfoTabPage.Text = "GPG";
-            this.GpgInfoTabPage.UseVisualStyleBackColor = true;
+            //this.GpgInfoTabPage.Controls.Add(this.revisionGpgInfo1);
+            //this.GpgInfoTabPage.Location = new System.Drawing.Point(1, 21);
+            //this.GpgInfoTabPage.Margin = new System.Windows.Forms.Padding(0);
+            //this.GpgInfoTabPage.Name = "GpgInfoTabPage";
+            //this.GpgInfoTabPage.Size = new System.Drawing.Size(646, 264);
+            //this.GpgInfoTabPage.TabIndex = 3;
+            //this.GpgInfoTabPage.Text = "GPG";
+            //this.GpgInfoTabPage.UseVisualStyleBackColor = true;
             // 
             // revisionGpgInfo1
             // 
-            this.revisionGpgInfo1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.revisionGpgInfo1.Location = new System.Drawing.Point(0, 0);
-            this.revisionGpgInfo1.Margin = new System.Windows.Forms.Padding(0);
-            this.revisionGpgInfo1.Name = "revisionGpgInfo1";
-            this.revisionGpgInfo1.Padding = new System.Windows.Forms.Padding(6);
-            this.revisionGpgInfo1.Size = new System.Drawing.Size(646, 264);
-            this.revisionGpgInfo1.TabIndex = 0;
+            //this.revisionGpgInfo1.Dock = System.Windows.Forms.DockStyle.Fill;
+            //this.revisionGpgInfo1.Location = new System.Drawing.Point(0, 0);
+            //this.revisionGpgInfo1.Margin = new System.Windows.Forms.Padding(0);
+            //this.revisionGpgInfo1.Name = "revisionGpgInfo1";
+            //this.revisionGpgInfo1.Padding = new System.Windows.Forms.Padding(6);
+            //this.revisionGpgInfo1.Size = new System.Drawing.Size(646, 264);
+            //this.revisionGpgInfo1.TabIndex = 0;
             // 
             // FilterToolTip
             // 
@@ -1029,7 +1029,7 @@ namespace GitUI.CommandsDialogs
             //// 
             //// repositoryToolStripMenuItem
             //// 
-            this.repositoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            //this.repositoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             //this.refreshToolStripMenuItem,
             //this.fileExplorerToolStripMenuItem,
             //this.toolStripSeparator8,
@@ -1051,10 +1051,10 @@ namespace GitUI.CommandsDialogs
             //this.repoSettingsToolStripMenuItem,
             //this.toolStripSeparator13,
             //this.closeToolStripMenuItem
-            });
-            this.repositoryToolStripMenuItem.Name = "repositoryToolStripMenuItem";
-            this.repositoryToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
-            this.repositoryToolStripMenuItem.Text = "&Repository";
+            //});
+            //this.repositoryToolStripMenuItem.Name = "repositoryToolStripMenuItem";
+            //this.repositoryToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
+            //this.repositoryToolStripMenuItem.Text = "&Repository";
             //// 
             //// toolStripSeparator8
             //// 
@@ -1752,7 +1752,7 @@ namespace GitUI.CommandsDialogs
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             //this.fileToolStripMenuItem,
             //this.dashboardToolStripMenuItem,
-            this.repositoryToolStripMenuItem,
+            //this.repositoryToolStripMenuItem,
             //this.commandsToolStripMenuItem,
             //this._repositoryHostsToolStripMenuItem,
             //this.pluginsToolStripMenuItem,
@@ -1840,10 +1840,10 @@ namespace GitUI.CommandsDialogs
             this.RevisionsSplitContainer.ResumeLayout(false);
             this.RevisionGridContainer.ResumeLayout(false);
             this.CommitInfoTabControl.ResumeLayout(false);
-            this.CommitInfoTabPage.ResumeLayout(false);
+            //this.CommitInfoTabPage.ResumeLayout(false);
             this.TreeTabPage.ResumeLayout(false);
             this.DiffTabPage.ResumeLayout(false);
-            this.GpgInfoTabPage.ResumeLayout(false);
+            //this.GpgInfoTabPage.ResumeLayout(false);
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gitItemBindingSource)).EndInit();
@@ -1868,10 +1868,10 @@ namespace GitUI.CommandsDialogs
         private SplitContainer RevisionsSplitContainer;
 
         private FullBleedTabControl CommitInfoTabControl;
-        private TabPage CommitInfoTabPage;
+        //private TabPage CommitInfoTabPage;
         private TabPage DiffTabPage;
         private TabPage TreeTabPage;
-        private TabPage GpgInfoTabPage;
+        //private TabPage GpgInfoTabPage;
 
         private BindingSource gitRevisionBindingSource;
         private BindingSource gitItemBindingSource;
@@ -1893,7 +1893,7 @@ namespace GitUI.CommandsDialogs
         private ToolStripSplitButton _NO_TRANSLATE_WorkingDir;
         //private ToolStripSeparator toolStripSeparator0;
         //private ToolStripSeparator toolStripSeparator1;
-        private ToolStripSplitButton userShell;
+        //private ToolStripSplitButton userShell;
         //private ToolStripSeparator toolStripSeparator2;
         //private ToolStripButton EditSettings;
         //private ToolStripButton RefreshButton;
@@ -1924,7 +1924,7 @@ namespace GitUI.CommandsDialogs
         //private ToolStripMenuItem fileExplorerToolStripMenuItem;
         //private ToolStripSeparator toolStripMenuItem1;
         //private ToolStripMenuItem exitToolStripMenuItem;
-        private ToolStripMenuItem repositoryToolStripMenuItem;
+        //private ToolStripMenuItem repositoryToolStripMenuItem;
         //private ToolStripMenuItem gitBashToolStripMenuItem;
         //private ToolStripMenuItem gitGUIToolStripMenuItem;
         //private ToolStripMenuItem kGitToolStripMenuItem;
@@ -1994,7 +1994,7 @@ namespace GitUI.CommandsDialogs
         //private ToolStripSeparator toolStripSeparator25;
         //private ToolStripSeparator toolStripSeparator22;
         //private ToolStripSeparator toolStripSeparator23;
-        private ToolStripSplitButton toolStripButtonLevelUp;
+        //private ToolStripSplitButton toolStripButtonLevelUp;
         //private ToolStripSplitButton toolStripButtonPull;
         //private ToolStripMenuItem mergeToolStripMenuItem;
         //private ToolStripMenuItem rebaseToolStripMenuItem1;

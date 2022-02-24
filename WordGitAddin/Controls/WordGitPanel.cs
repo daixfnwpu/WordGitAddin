@@ -34,7 +34,7 @@ namespace WordGitAddin.Controls
             InitializeComponent();
         }
 
-        public void EmbedForm(FormBrowse frm)
+        public void EmbedForm(WordGitForm frm)
         {
             frm.TopLevel = false;
             frm.FormBorderStyle = FormBorderStyle.None;
@@ -152,7 +152,7 @@ namespace WordGitAddin.Controls
             var commands = new GitUICommands(GetWorkingDir(args));
 
             // commands.StartBrowseDialog();
-            var formBrowser = new FormBrowse(commands, "");
+            var formBrowser = new WordGitForm(commands, "");
             EmbedForm(formBrowser);
 
         }
