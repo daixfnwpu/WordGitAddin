@@ -213,9 +213,6 @@ namespace GitUI.CommandsDialogs
             var toolForeColor = SystemColors.WindowText;
             BackColor = toolBackColor;
             ForeColor = toolForeColor;
-            //mainMenuStrip.BackColor = toolBackColor;
-            //mainMenuStrip.ForeColor = toolForeColor;
-
             toolPanel.TopToolStripPanel.MouseClick += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
@@ -241,7 +238,6 @@ namespace GitUI.CommandsDialogs
             RevisionGrid.ToggledBetweenArtificialAndHeadCommits += (s, e) => FocusRevisionDiffFileStatusList();
 
             toolPanel.TopToolStripPanel.BackColor = Color.Transparent;
-            //mainMenuStrip.BackColor = Color.Transparent;
             ToolStripMain.BackColor = Color.Transparent;
             BackColor = OtherColors.BackgroundColor;
 
@@ -426,7 +422,6 @@ namespace GitUI.CommandsDialogs
 
             HideVariableMainMenuItems();
             RefreshSplitViewLayout();
-            LayoutRevisionInfo();
             InternalInitialize(false);
 
             if (!Module.IsValidGitWorkingDir())
@@ -626,7 +621,6 @@ namespace GitUI.CommandsDialogs
         private void HideVariableMainMenuItems()
         {
             _formBrowseMenus.RemoveRevisionGridMainMenuItems();
-            //mainMenuStrip.Refresh();
         }
 
         private void InternalInitialize(bool hard)
@@ -1006,7 +1000,6 @@ namespace GitUI.CommandsDialogs
 
             if (commitInfoPosition != AppSettings.CommitInfoPosition)
             {
-                LayoutRevisionInfo();
             }
 
             Hotkeys = HotkeySettingsManager.LoadHotkeys(HotkeySettingsName);
@@ -1415,7 +1408,6 @@ namespace GitUI.CommandsDialogs
 #endif
 
                 HideDashboard();
-                RevisionInfo.SetRevisionWithChildren(null, Array.Empty<ObjectId>());
                 UICommands.RepoChangedNotifier.Notify();
                 RevisionGrid.IndexWatcher.Reset();
             }
@@ -2242,7 +2234,6 @@ namespace GitUI.CommandsDialogs
             DiagnosticsClient.TrackEvent("Layout change",
                 new Dictionary<string, string> { { nameof(AppSettings.CommitInfoPosition), AppSettings.CommitInfoPosition.ToString() } });
 
-            LayoutRevisionInfo();
             RefreshLayoutToggleButtonStates();
         }
 
@@ -2257,57 +2248,6 @@ namespace GitUI.CommandsDialogs
 
         private void RefreshLayoutToggleButtonStates()
         {
-        }
-
-        private void LayoutRevisionInfo()
-        {
-            _ = CommitInfoTabControl.Handle;
-
-            RevisionInfo.SuspendLayout();
-            CommitInfoTabControl.SuspendLayout();
-            RevisionsSplitContainer.SuspendLayout();
-
-            var commitInfoPosition = AppSettings.CommitInfoPosition;
-            if (commitInfoPosition == CommitInfoPosition.BelowList)
-            {
-                RevisionsSplitContainer.FixedPanel = FixedPanel.Panel2;
-                RevisionGridContainer.Parent = RevisionsSplitContainer.Panel1;
-                RevisionsSplitContainer.Panel2Collapsed = true;
-            }
-            else
-            {
-                int width = DpiUtil.Scale(490) + SystemInformation.VerticalScrollBarWidth;
-                if (commitInfoPosition == CommitInfoPosition.RightwardFromList)
-                {
-                    RevisionsSplitContainer.FixedPanel = FixedPanel.Panel2;
-                    RevisionsSplitContainer.SplitterDistance = Math.Max(0, RevisionsSplitContainer.Width - width);
-                    RevisionInfo.Parent = RevisionsSplitContainer.Panel2;
-                    RevisionGridContainer.Parent = RevisionsSplitContainer.Panel1;
-                }
-                else if (commitInfoPosition == CommitInfoPosition.LeftwardFromList)
-                {
-                    RevisionsSplitContainer.FixedPanel = FixedPanel.Panel1;
-                    RevisionsSplitContainer.SplitterDistance = width;
-                    RevisionInfo.Parent = RevisionsSplitContainer.Panel1;
-                    RevisionGridContainer.Parent = RevisionsSplitContainer.Panel2;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-
-                RevisionsSplitContainer.Panel2Collapsed = false;
-            }
-
-            RevisionInfo.Parent.BackColor = RevisionInfo.BackColor;
-            RevisionInfo.ResumeLayout(performLayout: true);
-
-            MainSplitContainer.Panel1.BackColor = OtherColors.PanelBorderColor;
-            RevisionsSplitContainer.Panel1.BackColor = OtherColors.PanelBorderColor;
-            RevisionsSplitContainer.Panel2.BackColor = OtherColors.PanelBorderColor;
-
-            CommitInfoTabControl.ResumeLayout(performLayout: true);
-            RevisionsSplitContainer.ResumeLayout(performLayout: true);
         }
 
         #endregion

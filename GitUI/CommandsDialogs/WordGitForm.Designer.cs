@@ -14,8 +14,6 @@ namespace GitUI.CommandsDialogs
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
             System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
-            //System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
-            //System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
             this.ToolStripMain = new GitUI.ToolStripEx();
             this._NO_TRANSLATE_WorkingDir = new System.Windows.Forms.ToolStripSplitButton();
             this.branchSelect = new System.Windows.Forms.ToolStripSplitButton();
@@ -28,7 +26,6 @@ namespace GitUI.CommandsDialogs
             this.notificationBarBisectInProgress = new GitUI.UserControls.InteractiveGitActionControl();
             this.notificationBarGitActionInProgress = new GitUI.UserControls.InteractiveGitActionControl();
             this.CommitInfoTabControl = new GitUI.CommandsDialogs.FullBleedTabControl();
-            this.RevisionInfo = new GitUI.CommitInfo.CommitInfo();
             this.TreeTabPage = new System.Windows.Forms.TabPage();
             this.fileTree = new GitUI.CommandsDialogs.RevisionFileTreeControl();
             this.DiffTabPage = new System.Windows.Forms.TabPage();
@@ -41,14 +38,11 @@ namespace GitUI.CommandsDialogs
             this.clearRecentRepositoriesListToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiRecentRepositoriesClear = new System.Windows.Forms.ToolStripMenuItem();
             this.checkoutBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            //this.mainMenuStrip = new GitUI.MenuStripEx();
             this.gitItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.gitRevisionBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.toolPanel = new System.Windows.Forms.ToolStripContainer();
             toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
-            //toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            //toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
@@ -65,7 +59,6 @@ namespace GitUI.CommandsDialogs
             this.CommitInfoTabControl.SuspendLayout();
             this.TreeTabPage.SuspendLayout();
             this.DiffTabPage.SuspendLayout();
-            //this.mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gitItemBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gitRevisionBindingSource)).BeginInit();
             this.toolPanel.ContentPanel.SuspendLayout();
@@ -78,8 +71,6 @@ namespace GitUI.CommandsDialogs
             toolStripMenuItem4.Name = "toolStripMenuItem4";
             toolStripMenuItem4.Size = new System.Drawing.Size(83, 22);
             toolStripMenuItem4.Text = "...";
-            //toolStripSeparator14.Name = "toolStripSeparator14";
-            //toolStripSeparator14.Size = new System.Drawing.Size(236, 6);
             this.ToolStripMain.ClickThrough = true;
             this.ToolStripMain.Dock = System.Windows.Forms.DockStyle.Top;
             this.ToolStripMain.DrawBorder = false;
@@ -117,8 +108,6 @@ namespace GitUI.CommandsDialogs
             this.branchSelect.ButtonClick += new System.EventHandler(this.CurrentBranchClick);
             this.branchSelect.DropDownOpening += new System.EventHandler(this.CurrentBranchDropDownOpening);
             this.branchSelect.MouseUp += new System.Windows.Forms.MouseEventHandler(this.branchSelect_MouseUp);
-            //toolStripSeparator11.Name = "toolStripSeparator11";
-            //toolStripSeparator11.Size = new System.Drawing.Size(236, 6);
             this.MainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.MainSplitContainer.Location = new System.Drawing.Point(0, 0);
@@ -201,17 +190,6 @@ namespace GitUI.CommandsDialogs
             this.CommitInfoTabControl.Size = new System.Drawing.Size(650, 287);
             this.CommitInfoTabControl.TabIndex = 0;
             this.CommitInfoTabControl.SelectedIndexChanged += new System.EventHandler(this.CommitInfoTabControl_SelectedIndexChanged);
-            this.RevisionInfo.BackColor = System.Drawing.SystemColors.Window;
-            this.RevisionInfo.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.RevisionInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RevisionInfo.Location = new System.Drawing.Point(0, 0);
-            this.RevisionInfo.Margin = new System.Windows.Forms.Padding(0);
-            this.RevisionInfo.Name = "RevisionInfo";
-            this.RevisionInfo.ShowBranchesAsLinks = true;
-            this.RevisionInfo.Size = new System.Drawing.Size(646, 264);
-            this.RevisionInfo.TabIndex = 0;
-            this.RevisionInfo.CommandClicked += new System.EventHandler<ResourceManager.CommandEventArgs>(this.RevisionInfo_CommandClicked);
-            this.TreeTabPage.Controls.Add(this.fileTree);
             this.TreeTabPage.Location = new System.Drawing.Point(1, 21);
             this.TreeTabPage.Margin = new System.Windows.Forms.Padding(0);
             this.TreeTabPage.Name = "TreeTabPage";
@@ -281,13 +259,6 @@ namespace GitUI.CommandsDialogs
             this.checkoutBranchToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.checkoutBranchToolStripMenuItem.Text = "Checkout branch...";
             this.checkoutBranchToolStripMenuItem.Click += new System.EventHandler(this.CheckoutBranchToolStripMenuItemClick);
-            //this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            //});
-            //this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
-            //this.mainMenuStrip.Name = "mainMenuStrip";
-            //this.mainMenuStrip.Size = new System.Drawing.Size(923, 24);
-            //this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(4);
-            //this.mainMenuStrip.TabIndex = 0;
             this.toolPanel.BottomToolStripPanelVisible = false;
             this.toolPanel.ContentPanel.Controls.Add(this.MainSplitContainer);
             this.toolPanel.ContentPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -309,7 +280,6 @@ namespace GitUI.CommandsDialogs
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.ClientSize = new System.Drawing.Size(923, 573);
             this.Controls.Add(this.toolPanel);
-            //this.Controls.Add(this.mainMenuStrip);
             this.Name = "WordGitForm";
             this.Text = "Git Extensions";
             this.ToolStripMain.ResumeLayout(false);
@@ -329,8 +299,6 @@ namespace GitUI.CommandsDialogs
             this.CommitInfoTabControl.ResumeLayout(false);
             this.TreeTabPage.ResumeLayout(false);
             this.DiffTabPage.ResumeLayout(false);
-            //this.mainMenuStrip.ResumeLayout(false);
-            //this.mainMenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gitItemBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gitRevisionBindingSource)).EndInit();
             this.toolPanel.ContentPanel.ResumeLayout(false);
@@ -354,7 +322,6 @@ namespace GitUI.CommandsDialogs
         private BindingSource gitRevisionBindingSource;
         private BindingSource gitItemBindingSource;
         private GitUI.RevisionGridControl RevisionGrid;
-        private CommitInfo.CommitInfo RevisionInfo;
         private GitUI.BranchTreePanel.RepoObjectsTree repoObjectsTree;
         private ToolTip FilterToolTip;
         private RevisionFileTreeControl fileTree;
@@ -362,7 +329,6 @@ namespace GitUI.CommandsDialogs
         private ToolStripContainer toolPanel;
         private RevisionGpgInfoControl revisionGpgInfo1;
 
-      //  private MenuStripEx mainMenuStrip;
         private ToolStripEx ToolStripMain;
         private ToolStripSplitButton _NO_TRANSLATE_WorkingDir;
         private ToolStripSplitButton branchSelect;
