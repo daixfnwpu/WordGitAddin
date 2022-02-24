@@ -152,6 +152,7 @@ namespace WordGitAddin
             activeCustomPane = CustomTaskPanes.Add(wordGitPanel, "WordGit");
             activeCustomPane.VisibleChanged += CustomTaskPaneVisibleChanged;
             activeCustomPane.DockPosition = MsoCTPDockPosition.msoCTPDockPositionRight;
+            activeCustomPane.Width = 500;
             activeCustomPane.DockPositionRestrict = MsoCTPDockPositionRestrict.msoCTPDockPositionRestrictNoHorizontal;
             return activeCustomPane;
         }
