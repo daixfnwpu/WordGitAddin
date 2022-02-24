@@ -457,33 +457,7 @@ namespace GitUI.CommandsDialogs
                 };
             }
 
-            void InitToolStripStyles(Color toolForeColor, Color toolBackColor)
-            {
-                toolPanel.TopToolStripPanel.BackColor = toolBackColor;
-                toolPanel.TopToolStripPanel.ForeColor = toolForeColor;
-
-                ToolStripMain.BackColor = toolBackColor;
-                ToolStripMain.ForeColor = toolForeColor;
-                ToolStripFilters.BackColor = toolBackColor;
-                ToolStripFilters.ForeColor = toolForeColor;
-                ToolStripScripts.BackColor = toolBackColor;
-                ToolStripScripts.ForeColor = toolForeColor;
-
-                //toolStripRevisionFilterDropDownButton.BackColor = toolBackColor;
-                //toolStripRevisionFilterDropDownButton.ForeColor = toolForeColor;
-
-                var toolTextBoxBackColor = SystemColors.Window;
-                //toolStripBranchFilterComboBox.BackColor = toolTextBoxBackColor;
-                //toolStripBranchFilterComboBox.ForeColor = toolForeColor;
-                //toolStripRevisionFilterTextBox.BackColor = toolTextBoxBackColor;
-                //toolStripRevisionFilterTextBox.ForeColor = toolForeColor;
-
-                //// Scale tool strip items according to DPI
-                //toolStripBranchFilterComboBox.Size = DpiUtil.Scale(toolStripBranchFilterComboBox.Size);
-                //toolStripRevisionFilterTextBox.Size = DpiUtil.Scale(toolStripRevisionFilterTextBox.Size);
-            }
-
-            Brush UpdateCommitButtonAndGetBrush(IReadOnlyList<GitItemStatus>? status, bool showCount)
+           Brush UpdateCommitButtonAndGetBrush(IReadOnlyList<GitItemStatus>? status, bool showCount)
             {
                 var repoStateVisualiser = new RepoStateVisualiser();
                 var (image, brush) = repoStateVisualiser.Invoke(status);
