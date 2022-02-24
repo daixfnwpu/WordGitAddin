@@ -56,11 +56,17 @@
 
   <ItemGroup>
     <!-- Resources -->
+    <EmbeddedResource Update="CommandsDialogs\WordGitForm.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Images.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Images.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Compile Update="CommandsDialogs\WordGitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Properties\Images.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
