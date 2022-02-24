@@ -200,7 +200,7 @@ namespace GitUI.CommandsDialogs
             FillBuildReport(revision: null);     
             RevisionGrid.ShowBuildServerInfo = true;
 
-            _formBrowseMenus = new FormBrowseMenus(mainMenuStrip);
+            _formBrowseMenus = new FormBrowseMenus(ToolStripMain);
             RevisionGrid.MenuCommands.MenuChanged += (sender, e) => _formBrowseMenus.OnMenuCommandsPropertyChanged();
             SystemEvents.SessionEnding += (sender, args) => SaveApplicationSettings();
 
@@ -213,8 +213,8 @@ namespace GitUI.CommandsDialogs
             var toolForeColor = SystemColors.WindowText;
             BackColor = toolBackColor;
             ForeColor = toolForeColor;
-            mainMenuStrip.BackColor = toolBackColor;
-            mainMenuStrip.ForeColor = toolForeColor;
+            //mainMenuStrip.BackColor = toolBackColor;
+            //mainMenuStrip.ForeColor = toolForeColor;
 
             toolPanel.TopToolStripPanel.MouseClick += (s, e) =>
             {
@@ -241,7 +241,7 @@ namespace GitUI.CommandsDialogs
             RevisionGrid.ToggledBetweenArtificialAndHeadCommits += (s, e) => FocusRevisionDiffFileStatusList();
 
             toolPanel.TopToolStripPanel.BackColor = Color.Transparent;
-            mainMenuStrip.BackColor = Color.Transparent;
+            //mainMenuStrip.BackColor = Color.Transparent;
             ToolStripMain.BackColor = Color.Transparent;
             BackColor = OtherColors.BackgroundColor;
 
@@ -626,7 +626,7 @@ namespace GitUI.CommandsDialogs
         private void HideVariableMainMenuItems()
         {
             _formBrowseMenus.RemoveRevisionGridMainMenuItems();
-            mainMenuStrip.Refresh();
+            //mainMenuStrip.Refresh();
         }
 
         private void InternalInitialize(bool hard)
