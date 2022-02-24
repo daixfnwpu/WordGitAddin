@@ -2347,5 +2347,20 @@ namespace GitUI.CommandsDialogs
         private void HelpToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
         }
+
+        private void tsbShowRepos_Click(object sender, EventArgs e)
+        {
+            // TODO: throw new NotImplementedException();
+            if (MainSplitContainer.Panel2Collapsed == false)
+            {
+                MainSplitContainer.Panel1Collapsed = true;
+                MainSplitContainer.Panel1.Hide();
+            }
+            else
+            {
+                MainSplitContainer.Panel1Collapsed = false;
+                MainSplitContainer.Panel1.Show();
+            }
+        }
     }
 }

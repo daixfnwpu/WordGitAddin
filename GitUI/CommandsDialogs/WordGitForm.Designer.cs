@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace GitUI.CommandsDialogs
@@ -29,6 +30,7 @@ namespace GitUI.CommandsDialogs
             this.TreeTabPage = new System.Windows.Forms.TabPage();
             this.fileTree = new GitUI.CommandsDialogs.RevisionFileTreeControl();
             this.DiffTabPage = new System.Windows.Forms.TabPage();
+            this.tsbShowRepos = new System.Windows.Forms.ToolStripButton();
             this.revisionDiff = new GitUI.CommandsDialogs.RevisionDiffControl();
             this.revisionGpgInfo1 = new GitUI.CommandsDialogs.RevisionGpgInfoControl();
             this.FilterToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -76,9 +78,18 @@ namespace GitUI.CommandsDialogs
             this.ToolStripMain.GripMargin = new System.Windows.Forms.Padding(0);
             this.ToolStripMain.GripStyle = ToolStripGripStyle.Hidden;
             this.ToolStripMain.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.tsbShowRepos.CheckOnClick = true;
+            this.tsbShowRepos.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbShowRepos.Image = global::GitUI.Properties.Images.BranchLocalRoot;
+            this.tsbShowRepos.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbShowRepos.Name = "tsbShowRepos";
+            this.tsbShowRepos.Size = new System.Drawing.Size(23, 22);
+            this.tsbShowRepos.Text = "&Repo";
+            this.tsbShowRepos.Click += new System.EventHandler(this.tsbShowRepos_Click);
             this.ToolStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._NO_TRANSLATE_WorkingDir,
             this.branchSelect,
+            this.tsbShowRepos
             });
             this.ToolStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.ToolStripMain.Location = new System.Drawing.Point(3, 0);
@@ -184,6 +195,7 @@ namespace GitUI.CommandsDialogs
             this.CommitInfoTabControl.Size = new System.Drawing.Size(650, 287);
             this.CommitInfoTabControl.TabIndex = 0;
             this.CommitInfoTabControl.SelectedIndexChanged += new System.EventHandler(this.CommitInfoTabControl_SelectedIndexChanged);
+            this.TreeTabPage.Controls.Add(this.fileTree);
             this.TreeTabPage.Location = new System.Drawing.Point(1, 21);
             this.TreeTabPage.Margin = new System.Windows.Forms.Padding(0);
             this.TreeTabPage.Name = "TreeTabPage";
@@ -303,6 +315,8 @@ namespace GitUI.CommandsDialogs
             this.PerformLayout();
         }
 
+       
+
         #endregion
 
         internal SplitContainer MainSplitContainer;
@@ -321,7 +335,7 @@ namespace GitUI.CommandsDialogs
         private RevisionDiffControl revisionDiff;
         private ToolStripContainer toolPanel;
         private RevisionGpgInfoControl revisionGpgInfo1;
-
+        private ToolStripButton tsbShowRepos;
         private ToolStripEx ToolStripMain;
         private ToolStripSplitButton _NO_TRANSLATE_WorkingDir;
         private ToolStripSplitButton branchSelect;
