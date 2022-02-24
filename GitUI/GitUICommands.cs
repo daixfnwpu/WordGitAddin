@@ -1128,7 +1128,8 @@ namespace GitUI
         /// <param name="firstId">First selected commit id (as in a diff).</param>
         public bool StartBrowseDialog(IWin32Window? owner = null, string filter = "", ObjectId? selectedId = null, ObjectId? firstId = null)
         {
-            var form = new FormBrowse(this, filter, selectedId, firstId);
+            //var form = new FormBrowse(this, filter, selectedId, firstId);
+            var form = new WordGitForm(this, filter, selectedId, firstId);
 
             if (Application.MessageLoop)
             {
