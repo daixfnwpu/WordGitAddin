@@ -1143,12 +1143,20 @@ namespace GitUI
             return true;
         }
 
-        public void StartFileHistoryDialog(IWin32Window? owner, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
+        public void StartFileHistoryDialogOnOtherProcess(IWin32Window? owner, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
         {
             string arguments = $"{(showBlame ? BlameHistoryCommand : FileHistoryCommand)} {fileName.Quote()} {revision?.ObjectId} {(filterByRevision ? FilterByRevisionArg : string.Empty)}";
             Launch(arguments, Module.WorkingDir);
         }
-
+        public void StartFileHistoryDialog(IWin32Window? owner, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
+        {
+            string arguments = $"{(showBlame ? BlameHistoryCommand : FileHistoryCommand)} {fileName.Quote()} {revision?.ObjectId} {(filterByRevision ? FilterByRevisionArg : string.Empty)}";
+            var args = ("app " + arguments).Split(' ').ToList();
+            args[4] = FilterByRevisionArg;
+            args[2] = escapeNoIllWordInPath(args[2]);
+            // TODO: modify from Launch to direct show Form; add the application to args[0];
+            RunCommand(args);
+        }
         public void OpenWithDifftool(IWin32Window? owner, IReadOnlyList<GitRevision?> revisions, string fileName, string? oldFileName, RevisionDiffKind diffKind, bool isTracked, string? customTool = null)
         {
             // Note: Order in revisions is that first clicked is last in array
@@ -1436,11 +1444,13 @@ namespace GitUI
                 case BlameHistoryCommand:
                 case FileHistoryCommand:
                     // filename [revision [--filter-by-revision]]
-                    if (Module.WorkingDir.TrimEnd('\\') == Path.GetFullPath(args[2]) && Module.SuperprojectModule is not null)
+                    string filePath = args[2];
+                    filePath = escapeNoIllWordInPath(filePath);
+                    if (Module.WorkingDir.TrimEnd('\\') == Path.GetFullPath(filePath) && Module.SuperprojectModule is not null)
                     {
                         Module = Module.SuperprojectModule;
                     }
-
+                    
                     return RunFileHistoryCommand(args, showBlame: command == BlameHistoryCommand);
                 case "fileeditor":  // filename
                     return StartFileEditorDialog(args[2]);
@@ -1668,6 +1678,7 @@ namespace GitUI
         private bool RunFileHistoryCommand(IReadOnlyList<string> args, bool showBlame)
         {
             string fileHistoryFileName = args[2];
+            fileHistoryFileName = escapeNoIllWordInPath(fileHistoryFileName);
             if (new FormFileHistoryController().TryGetExactPath(_fullPathResolver.Resolve(fileHistoryFileName), out var exactFileName))
             {
                 fileHistoryFileName = NormalizeFileName(exactFileName);
@@ -1926,6 +1937,16 @@ namespace GitUI
             internal string NormalizeFileName(string fileName) => _commands.NormalizeFileName(fileName);
 
             internal bool RunCommandBasedOnArgument(string[] args) => _commands.RunCommandBasedOnArgument(args, InitializeArguments(args));
+        }
+        private string escapeNoIllWordInPath(string filePath)
+        {
+           // string filePath = args[2];
+            if (filePath.StartsWith("\""))
+            {
+              return filePath.Substring(1, filePath.Length - 2);
+            }
+
+            return filePath;
         }
     }
 }

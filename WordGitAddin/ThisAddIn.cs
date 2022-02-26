@@ -11,7 +11,7 @@ using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
 using OfficeTools = Microsoft.Office.Tools;
 using WordTools = Microsoft.Office.Tools.Word;
-
+using System.IO;
 
 namespace WordGitAddin
 {
@@ -124,29 +124,6 @@ namespace WordGitAddin
                 return activeCustomPane;
             }
 
-            /*
-                        // Determine if this is the first run of the Add-In by checking if there are no Excel panes in the collection.
-                        // This must be done at this point of the code, before the lines below that create an Excel pane.
-                        var firstRun = ExcelPanesList.Count == 0;
-                        if (firstRun)
-                        {
-                            // Attempt to migrate all locally stored connections to the MySQL Workbench connections file.
-                            CheckForNextAutomaticConnectionsMigration(false);
-
-                            // Start the registry monitor
-                            _registryMonitor?.Start();
-                        }
-
-                        // Instantiate the Excel Add-In pane to attach it to the Excel custom task pane.
-                        // Note that in Excel 2007 and 2010 a MDI model is used so only a single Excel pane is instantiated, whereas in Excel 2013 and greater
-                        //  a SDI model is used instead, so an Excel pane is instantiated for each custom task pane appearing in each Excel window.
-                        var excelPane = new ExcelAddInPane(CurrentOfficeTheme) { Dock = DockStyle.Fill };
-                        var paneWidth = excelPane.Width;
-                        excelPane.SizeChanged += ExcelPane_SizeChanged;
-                        ExcelPanesList.Add(excelPane);
-
-                      */
-
             // Create a new custom task pane and initialize it.
             var wordGitPanel = new WordGitPanel();
             activeCustomPane = CustomTaskPanes.Add(wordGitPanel, "WordGit");
@@ -206,9 +183,6 @@ namespace WordGitAddin
             }
         }
 
-
-
-
         public WordGitRibbon CustomWordGitRibbon { get; private set; }
         /*  Override this method to provide the Microsoft Office application an implementation of the Microsoft.Office.Core.IRibbonExtensibility interface, or if you have multiple Ribbons in your project and you want to specify which Ribbons to display at run time.
 
@@ -220,6 +194,22 @@ namespace WordGitAddin
         {
             CustomWordGitRibbon = new WordGitRibbon();
             return CustomWordGitRibbon;
+        }
+
+        private bool DocConversToDocx(string filepath)
+        {
+                object oMissing = System.Reflection.Missing.Value;
+              //  Word._Application oWord;
+            Microsoft.Office.Interop.Word.Application oWord;
+                Word._Document oDoc;
+                oWord = new Word.Application();
+                //oWord.Visible = true;
+                oDoc = oWord.Documents.Open(filepath,ref oMissing, ref oMissing,
+                                            ref oMissing, ref oMissing);
+            // oWord.DefaultSaveFormat = Word.WdSaveFormat.wdWordDocument;
+             var  saveFilePath = Path.ChangeExtension(filepath, "docx"); 
+                oWord.Documents.Save(filepath,WdOriginalFormat.wdWordDocument);
+                               return false; 
         }
     }
 }

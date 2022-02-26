@@ -2351,7 +2351,7 @@ namespace GitUI.CommandsDialogs
         private void tsbShowRepos_Click(object sender, EventArgs e)
         {
             // TODO: throw new NotImplementedException();
-            if (MainSplitContainer.Panel2Collapsed == false)
+            if (MainSplitContainer.Panel1Collapsed == false)
             {
                 MainSplitContainer.Panel1Collapsed = true;
                 MainSplitContainer.Panel1.Hide();
