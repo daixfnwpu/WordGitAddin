@@ -1,4 +1,6 @@
-﻿namespace GitUI.CommandsDialogs
+﻿using System;
+
+namespace GitUI.CommandsDialogs
 {
     partial class RevisionFileTreeControl
     {
@@ -58,7 +60,7 @@
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.FileText = new GitUI.Editor.FileViewer();
+            this.FileHistory = new ();
             ((System.ComponentModel.ISupportInitialize)(this.FileTreeSplitContainer)).BeginInit();
             this.FileTreeSplitContainer.Panel1.SuspendLayout();
             this.FileTreeSplitContainer.Panel2.SuspendLayout();
@@ -80,7 +82,7 @@
             // 
             // FileTreeSplitContainer.Panel2
             // 
-            this.FileTreeSplitContainer.Panel2.Controls.Add(this.FileText);
+            this.FileTreeSplitContainer.Panel2.Controls.Add(this.FileHistory);
             this.FileTreeSplitContainer.Size = new System.Drawing.Size(793, 303);
             this.FileTreeSplitContainer.SplitterDistance = 300;
             this.FileTreeSplitContainer.SplitterWidth = 6;
@@ -330,14 +332,15 @@
             this.collapseAllToolStripMenuItem.Text = "Collapse All";
             this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
             // 
-            // FileText
+            // FileHistory
             // 
-            this.FileText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FileText.Location = new System.Drawing.Point(0, 0);
-            this.FileText.Margin = new System.Windows.Forms.Padding(0);
-            this.FileText.Name = "FileText";
-            this.FileText.Size = new System.Drawing.Size(487, 303);
-            this.FileText.TabIndex = 0;
+            this.FileHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FileHistory.Location = new System.Drawing.Point(0, 0);
+            this.FileHistory.Margin = new System.Windows.Forms.Padding(0);
+            this.FileHistory.Name = "FileHistory";
+            this.FileHistory.Size = new System.Drawing.Size(487, 303);
+            this.FileHistory.TabIndex = 0;
+            this.FileHistory.DoubleClick += new System.EventHandler(this.FileHistoryDoubleClick);
             // 
             // RevisionFileTreeControl
             // 
@@ -355,11 +358,14 @@
 
         }
 
+        
+
         #endregion
 
         private System.Windows.Forms.SplitContainer FileTreeSplitContainer;
         private UserControls.NativeTreeView tvGitTree;
-        private Editor.FileViewer FileText;
+        // TODO: change the FileView to RevisionGridControl;
+        private RevisionGridControl FileHistory;
         private System.Windows.Forms.ContextMenuStrip FileTreeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem openWithDifftoolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem diffWithRememberedFileToolStripMenuItem;

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GitCommands;
@@ -22,7 +23,7 @@ namespace GitUI.CommandsDialogs
     public partial class RevisionFileTreeControl : GitModuleControl
     {
         private readonly TranslationString _resetFileCaption = new("Reset");
-        private readonly TranslationString _resetFileText = new("Are you sure you want to reset this file or directory?");
+        private readonly TranslationString _resetFileHistory = new("Are you sure you want to reset this file or directory?");
         private readonly TranslationString _saveFileFilterCurrentFormat = new("Current format");
         private readonly TranslationString _saveFileFilterAllFiles = new("All files");
         private readonly TranslationString _nodeNotFoundNextAvailableParentSelected = new("Node not found. The next available parent node will be selected.");
@@ -55,6 +56,7 @@ See the changes in the commit form.");
         private readonly RememberFileContextMenuController _rememberFileContextMenuController
             = RememberFileContextMenuController.Default;
         private Action? _refreshGitStatus;
+        private readonly AsyncLoader _asyncLoader = new();
 
         public RevisionFileTreeControl()
         {
@@ -211,7 +213,8 @@ See the changes in the commit form.");
 
                 if (tvGitTree.SelectedNode is null)
                 {
-                    FileText.Clear();
+                    //FileHistory.Clear();
+                    FileHistory.ForceRefreshRevisions();
                 }
             }
             finally
@@ -265,7 +268,7 @@ See the changes in the commit form.");
             openFileToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.OpenAsTempFile);
             openFileWithToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.OpenAsTempFileWith);
             editCheckedOutFileToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.EditFile);
-            FileText.ReloadHotkeys();
+            FileHistory.ReloadHotkeys();
         }
 
         private string GetShortcutKeyDisplayString(Command cmd)
@@ -342,17 +345,257 @@ See the changes in the commit form.");
         {
             GitUICommands.LaunchBrowse(workingDir: _fullPathResolver.Resolve(item.FileName.EnsureTrailingPathSeparator()) ?? "", selectedId: item.ObjectId);
         }
+        private void InitFileHistory(RevisionGridControl FileChanges,GitUICommands commands, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
+        {
+            FileChanges.SelectedId = revision?.ObjectId;
+            FileChanges.ShowBuildServerInfo = true;
+            FileChanges.SelectionChanged += FileChangesSelectionChanged;
+            FileChanges.DisableContextMenu();
+            LoadFileHistory(FileChanges, commands, fileName, revision, filterByRevision, showBlame);
+        }
 
+        private void FileChangesSelectionChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        // returns " --find-renames=..." according to app settings
+        private static ArgumentString FindRenamesOpt()
+        {
+            return AppSettings.FollowRenamesInFileHistoryExactOnly
+                ? " --find-renames=\"100%\""
+                : " --find-renames";
+        }
+
+        // returns " --find-renames=... --find-copies=..." according to app settings
+        private static ArgumentString FindRenamesAndCopiesOpts()
+        {
+            var findCopies = AppSettings.FollowRenamesInFileHistoryExactOnly
+                ? " --find-copies=\"100%\""
+                : " --find-copies";
+            return FindRenamesOpt() + findCopies;
+        }
+
+        private void LoadFileHistory( RevisionGridControl FileChanges,GitUICommands commands, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
+        {
+            FileChanges.Visible = true;
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return;
+            }
+
+            _asyncLoader.LoadAsync(
+                () => BuildFilter(),
+                filter =>
+                {
+                    FileChanges.SetFilters(filter);
+                    FileChanges.Load();
+                });
+
+            return;
+
+            (string? revision, string path) BuildFilter()
+            {
+               // var fileName = fileName;
+
+                // Replace windows path separator to Linux path separator.
+                // This is needed to keep the file history working when started from file tree in
+                // browse dialog.
+                // TODO : need to considle 
+                //FileName = fileName.ToPosixPath();
+
+                var res = (revision: (string?)null, path: $" \"{fileName}\"");
+                var fullFilePath = _fullPathResolver.Resolve(fileName);
+
+                if (AppSettings.FollowRenamesInFileHistory && !Directory.Exists(fullFilePath))
+                {
+                    // git log --follow is not working as expected (see  http://kerneltrap.org/mailarchive/git/2009/1/30/4856404/thread)
+                    //
+                    // But we can take a more complicated path to get reasonable results:
+                    //  1. use git log --follow to get all previous filenames of the file we are interested in
+                    //  2. use git log "list of files names" to get the history graph
+                    //
+                    // note: This implementation is quite a quick hack (by someone who does not speak C# fluently).
+                    //
+
+                    var args = new GitArgumentBuilder("log")
+                    {
+                        "--format=\"%n\"",
+                        "--name-only",
+                        "--follow",
+                        FindRenamesAndCopiesOpts(),
+                        "--",
+                        fileName.Quote()
+                    };
+
+                    var listOfFileNames = new StringBuilder(fileName.Quote());
+
+                    // keep a set of the file names already seen
+                    var setOfFileNames = new HashSet<string?> { fileName };
+
+                    var lines = Module.GitExecutable.GetOutputLines(args, outputEncoding: GitModule.LosslessEncoding);
+
+                    foreach (var line in lines.Select(GitModule.ReEncodeFileNameFromLossless))
+                    {
+                        if (!Strings.IsNullOrEmpty(line) && setOfFileNames.Add(line))
+                        {
+                            listOfFileNames.Append(" \"");
+                            listOfFileNames.Append(line);
+                            listOfFileNames.Append('\"');
+                        }
+                    }
+
+                    // here we need --name-only to get the previous filenames in the revision graph
+                    res.path = listOfFileNames.ToString();
+                    res.revision += $" --name-only --parents{FindRenamesAndCopiesOpts()}";
+                }
+                else if (AppSettings.FollowRenamesInFileHistory)
+                {
+                    // history of a directory
+                    // --parents doesn't work with --follow enabled, but needed to graph a filtered log
+                    res.revision = $" {FindRenamesOpt()} --follow --parents";
+                }
+                else
+                {
+                    // rename following disabled
+                    res.revision = " --parents";
+                }
+
+                if (AppSettings.FullHistoryInFileHistory)
+                {
+                    res.revision = string.Concat(" --full-history ", AppSettings.SimplifyMergesInFileHistory ? "--simplify-merges " : string.Empty, res.revision);
+                }
+
+                return res;
+            }
+        }
+        //private void UpdateSelectedFileViewers(bool force = false)
+        //{
+        //    var selectedRevisions = FileChanges.GetSelectedRevisions();
+
+        //    if (selectedRevisions.Count == 0)
+        //    {
+        //        return;
+        //    }
+
+        //    GitRevision revision = selectedRevisions[0];
+        //    var children = FileChanges.GetRevisionChildren(revision.ObjectId);
+
+        //    var fileName = revision.Name;
+
+        //    if (Strings.IsNullOrEmpty(fileName))
+        //    {
+        //        fileName = FileName;
+        //    }
+
+        //    SetTitle(fileName);
+
+        //    if (revision.IsArtificial)
+        //    {
+        //        tabControl1.SelectedTab = DiffTab;
+
+        //        CommitInfoTabPage.Parent = null;
+        //        BlameTab.Parent = null;
+        //        ViewTab.Parent = null;
+        //    }
+        //    else
+        //    {
+        //        if (CommitInfoTabPage.Parent is null)
+        //        {
+        //            tabControl1.TabPages.Insert(0, CommitInfoTabPage);
+        //        }
+
+        //        if (ViewTab.Parent is null)
+        //        {
+        //            var index = tabControl1.TabPages.IndexOf(DiffTab);
+        //            Debug.Assert(index != -1, "TabControl should contain diff tab page");
+        //            tabControl1.TabPages.Insert(index + 1, ViewTab);
+        //        }
+
+        //        if (BlameTab.Parent is null)
+        //        {
+        //            var index = tabControl1.TabPages.IndexOf(ViewTab);
+        //            Debug.Assert(index != -1, "TabControl should contain view tab page");
+        //            tabControl1.TabPages.Insert(index + 1, BlameTab);
+        //        }
+        //    }
+
+        //    if (tabControl1.SelectedTab == BlameTab)
+        //    {
+        //        Blame.LoadBlame(revision, children, fileName, FileChanges, BlameTab, Diff.Encoding, force: force);
+        //    }
+        //    else if (tabControl1.SelectedTab == ViewTab)
+        //    {
+        //        Validates.NotNull(fileName);
+        //        View.Encoding = Diff.Encoding;
+        //        var file = new GitItemStatus(name: fileName)
+        //        {
+        //            IsTracked = true,
+        //            IsSubmodule = GitModule.IsValidGitWorkingDir(_fullPathResolver.Resolve(fileName))
+        //        };
+        //        View.ViewGitItemRevisionAsync(file, revision.ObjectId);
+        //    }
+        //    else if (tabControl1.SelectedTab == DiffTab)
+        //    {
+        //        Validates.NotNull(fileName);
+        //        var file = new GitItemStatus(name: fileName)
+        //        {
+        //            IsTracked = true,
+        //            IsSubmodule = GitModule.IsValidGitWorkingDir(_fullPathResolver.Resolve(fileName))
+        //        };
+        //        var revisions = FileChanges.GetSelectedRevisions();
+        //        var item = new FileStatusItem(firstRev: revisions.Skip(1).LastOrDefault(), secondRev: revisions.FirstOrDefault(), file);
+        //        Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
+        //    }
+        //    else if (tabControl1.SelectedTab == CommitInfoTabPage)
+        //    {
+        //        CommitDiff.SetRevision(revision.ObjectId, fileName);
+        //    }
+
+        //    _buildReportTabPageExtension ??= new BuildReportTabPageExtension(() => Module, tabControl1, _buildReportTabCaption.Text);
+
+        //    _buildReportTabPageExtension.FillBuildReport(selectedRevisions.Count == 1 ? revision : null);
+        //}
         private void tvGitTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            ThreadHelper.JoinableTaskFactory.RunAsync(ViewItem);
-
-            Task ViewItem()
+            if (e.Node?.Tag is GitItem gitItem)
             {
-                return e.Node?.Tag is GitItem gitItem
-                    ? ViewGitItemAsync(gitItem)
-                    : Task.CompletedTask;
+                ViewGitItem(gitItem);
             }
+
+            void ViewGitItem(GitItem gitItem)
+            {
+                switch (gitItem.ObjectType)
+                {
+                    case GitObjectType.Blob:
+                    case GitObjectType.Commit:
+                        {
+                            var file = new GitItemStatus(name: gitItem.FileName)
+                            {
+                                IsTracked = true,
+                                TreeGuid = gitItem.ObjectId,
+                                IsSubmodule = gitItem.ObjectType == GitObjectType.Commit
+                            };
+                            InitFileHistory(FileHistory, UICommands, file.Name);
+                            break;
+                        }
+                    default:
+                        {
+                            return;
+                        }
+
+                }
+            }
+
+            //ThreadHelper.JoinableTaskFactory.RunAsync(ViewItem);
+
+            //Task ViewItem()
+            //{
+            //    return e.Node?.Tag is GitItem gitItem
+            //        ? ViewGitItemAsync(gitItem)
+            //        : Task.CompletedTask;
+            //}
 
             Task ViewGitItemAsync(GitItem gitItem)
             {
@@ -360,21 +603,22 @@ See the changes in the commit form.");
                 {
                     case GitObjectType.Blob:
                     case GitObjectType.Commit:
-                    {
-                        var file = new GitItemStatus(name: gitItem.FileName)
                         {
-                            IsTracked = true,
-                            TreeGuid = gitItem.ObjectId,
-                            IsSubmodule = gitItem.ObjectType == GitObjectType.Commit
-                        };
-
-                        return FileText.ViewGitItemAsync(file);
-                    }
+                            var file = new GitItemStatus(name: gitItem.FileName)
+                            {
+                                IsTracked = true,
+                                TreeGuid = gitItem.ObjectId,
+                                IsSubmodule = gitItem.ObjectType == GitObjectType.Commit
+                            };
+                            //                        return FileHistory.ViewGitItemAsync(file);
+                            return Task.Run(() => InitFileHistory(FileHistory, UICommands, file.Name));
+                        }
 
                     default:
-                    {
-                        return FileText.ViewTextAsync("", "");
-                    }
+                        {
+
+                            return Task.Run(() => FileHistory.ForceRefreshRevisions());
+                        }
                 }
             }
         }
@@ -711,7 +955,7 @@ See the changes in the commit form.");
         {
             if (tvGitTree.SelectedNode?.Tag is GitItem gitItem && _revision is not null)
             {
-                if (MessageBox.Show(_resetFileText.Text, _resetFileCaption.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+                if (MessageBox.Show(_resetFileHistory.Text, _resetFileCaption.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
                 {
                     Module.CheckoutFiles(new[] { gitItem.FileName }, _revision.ObjectId, false);
                 }
@@ -822,7 +1066,7 @@ See the changes in the commit form.");
         {
             if (alreadyContainedFocus && tvGitTree.Focused)
             {
-                FileText.Focus();
+                FileHistory.Focus();
             }
             else
             {
@@ -838,6 +1082,11 @@ See the changes in the commit form.");
             }
 
             return _revisionFileTreeController.SelectFileOrFolder(tvGitTree, filePath.Substring(Module.WorkingDir.Length));
+        }
+        private void FileHistoryDoubleClick(object sender, EventArgs e)
+        {
+           // throw new NotImplementedException();
+           FileHistory.ViewSelectedRevisions();
         }
     }
 }

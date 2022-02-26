@@ -1673,7 +1673,7 @@ namespace GitUI
             fileName = fileName.ToPosixPath();
             return string.IsNullOrEmpty(Module.WorkingDir) ? fileName : fileName.Replace(Module.WorkingDir.ToPosixPath(), "");
         }
-
+         
         /// <returns>false on error.</returns>
         private bool RunFileHistoryCommand(IReadOnlyList<string> args, bool showBlame)
         {
@@ -1710,6 +1710,8 @@ namespace GitUI
 
                 filterByRevision = true;
             }
+            // TODO: show FileHistory in ReversionTree;
+            
 
             ShowModelessForm(owner: null, requiresValidWorkingDir: true, preEvent: null, postEvent: null,
                 () => new FormFileHistory(commands: this, fileHistoryFileName, revision, filterByRevision, showBlame));
