@@ -196,20 +196,24 @@ namespace WordGitAddin
             return CustomWordGitRibbon;
         }
 
+        private void WordFileDiff(string fileRevsion1,string fileRevsion2)
+        {
+
+        }
         private bool DocConversToDocx(string filepath)
         {
-                object oMissing = System.Reflection.Missing.Value;
-              //  Word._Application oWord;
+            object oMissing = System.Reflection.Missing.Value;
+            //  Word._Application oWord;
             Microsoft.Office.Interop.Word.Application oWord;
-                Word._Document oDoc;
-                oWord = new Word.Application();
-                //oWord.Visible = true;
-                oDoc = oWord.Documents.Open(filepath,ref oMissing, ref oMissing,
-                                            ref oMissing, ref oMissing);
+            Word._Document oDoc;
+            oWord = new Word.Application();
+            //oWord.Visible = true;
+            oDoc = oWord.Documents.Open(filepath, ref oMissing, ref oMissing,
+                                        ref oMissing, ref oMissing);
             // oWord.DefaultSaveFormat = Word.WdSaveFormat.wdWordDocument;
-             var  saveFilePath = Path.ChangeExtension(filepath, "docx"); 
-                oWord.Documents.Save(filepath,WdOriginalFormat.wdWordDocument);
-                               return false; 
+            var saveFilePath = Path.ChangeExtension(filepath, "docx");
+            oWord.Documents.Save(filepath, WdOriginalFormat.wdWordDocument);
+            return false;
         }
     }
 }

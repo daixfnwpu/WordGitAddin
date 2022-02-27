@@ -14,10 +14,11 @@ using GitExtUtils.GitUI;
 using GitUI.CommandsDialogs.BrowseDialog;
 using GitUI.Hotkey;
 using GitUI.Properties;
+using GitUI.UserControls;
 using GitUIPluginInterfaces;
 using Microsoft;
 using ResourceManager;
-
+using WordGitAddin;
 namespace GitUI.CommandsDialogs
 {
     public partial class RevisionFileTreeControl : GitModuleControl
@@ -345,18 +346,19 @@ See the changes in the commit form.");
         {
             GitUICommands.LaunchBrowse(workingDir: _fullPathResolver.Resolve(item.FileName.EnsureTrailingPathSeparator()) ?? "", selectedId: item.ObjectId);
         }
-        private void InitFileHistory(RevisionGridControl FileChanges,GitUICommands commands, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
+
+        private void InitFileHistory(RevisionGridControl fileChanges,GitUICommands commands, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
         {
-            FileChanges.SelectedId = revision?.ObjectId;
-            FileChanges.ShowBuildServerInfo = true;
-            FileChanges.SelectionChanged += FileChangesSelectionChanged;
-            FileChanges.DisableContextMenu();
-            LoadFileHistory(FileChanges, commands, fileName, revision, filterByRevision, showBlame);
+            fileChanges.SelectedId = revision?.ObjectId;
+            fileChanges.ShowBuildServerInfo = true;
+            fileChanges.SelectionChanged += FileChangesSelectionChanged;
+            fileChanges.DisableContextMenu();
+            LoadFileHistory(fileChanges, commands, fileName, revision, filterByRevision, showBlame);
         }
 
         private void FileChangesSelectionChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
 
         // returns " --find-renames=..." according to app settings
@@ -376,9 +378,9 @@ See the changes in the commit form.");
             return FindRenamesOpt() + findCopies;
         }
 
-        private void LoadFileHistory( RevisionGridControl FileChanges,GitUICommands commands, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
+        private void LoadFileHistory( RevisionGridControl fileChanges,GitUICommands commands, string fileName, GitRevision? revision = null, bool filterByRevision = false, bool showBlame = false)
         {
-            FileChanges.Visible = true;
+            fileChanges.Visible = true;
 
             if (string.IsNullOrEmpty(fileName))
             {
@@ -389,16 +391,15 @@ See the changes in the commit form.");
                 () => BuildFilter(),
                 filter =>
                 {
-                    FileChanges.SetFilters(filter);
-                    FileChanges.Load();
+                    fileChanges.SetFilters(filter);
+                    fileChanges.Load();
                 });
 
             return;
 
             (string? revision, string path) BuildFilter()
             {
-               // var fileName = fileName;
-
+                // var fileName = fileName;
                 // Replace windows path separator to Linux path separator.
                 // This is needed to keep the file history working when started from file tree in
                 // browse dialog.
@@ -470,93 +471,34 @@ See the changes in the commit form.");
                 return res;
             }
         }
-        //private void UpdateSelectedFileViewers(bool force = false)
-        //{
-        //    var selectedRevisions = FileChanges.GetSelectedRevisions();
+        private void UpdateSelectedFileViewers(bool force = false)
+        {
+            var selectedRevisions = FileHistory.GetSelectedRevisions();
 
-        //    if (selectedRevisions.Count == 0)
-        //    {
-        //        return;
-        //    }
+            if (selectedRevisions.Count == 0)
+            {
+                return;
+            }
 
-        //    GitRevision revision = selectedRevisions[0];
-        //    var children = FileChanges.GetRevisionChildren(revision.ObjectId);
+            GitRevision revision = selectedRevisions[0];
+            var children = FileHistory.GetRevisionChildren(revision.ObjectId);
 
-        //    var fileName = revision.Name;
+            var fileName = revision.Name;
 
-        //    if (Strings.IsNullOrEmpty(fileName))
-        //    {
-        //        fileName = FileName;
-        //    }
+            Validates.NotNull(fileName);
+            var file = new GitItemStatus(name: fileName)
+            {
+                IsTracked = true,
+                IsSubmodule = GitModule.IsValidGitWorkingDir(_fullPathResolver.Resolve(fileName))
+            };
+            var revisions = FileHistory.GetSelectedRevisions();
+            var item = new FileStatusItem(firstRev: revisions.Skip(1).LastOrDefault(), secondRev: revisions.FirstOrDefault(), file);
+            //TODO: call the addin's Diff vsto;
+            Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
+            WordGitAddin.Globals
 
-        //    SetTitle(fileName);
+        }
 
-        //    if (revision.IsArtificial)
-        //    {
-        //        tabControl1.SelectedTab = DiffTab;
-
-        //        CommitInfoTabPage.Parent = null;
-        //        BlameTab.Parent = null;
-        //        ViewTab.Parent = null;
-        //    }
-        //    else
-        //    {
-        //        if (CommitInfoTabPage.Parent is null)
-        //        {
-        //            tabControl1.TabPages.Insert(0, CommitInfoTabPage);
-        //        }
-
-        //        if (ViewTab.Parent is null)
-        //        {
-        //            var index = tabControl1.TabPages.IndexOf(DiffTab);
-        //            Debug.Assert(index != -1, "TabControl should contain diff tab page");
-        //            tabControl1.TabPages.Insert(index + 1, ViewTab);
-        //        }
-
-        //        if (BlameTab.Parent is null)
-        //        {
-        //            var index = tabControl1.TabPages.IndexOf(ViewTab);
-        //            Debug.Assert(index != -1, "TabControl should contain view tab page");
-        //            tabControl1.TabPages.Insert(index + 1, BlameTab);
-        //        }
-        //    }
-
-        //    if (tabControl1.SelectedTab == BlameTab)
-        //    {
-        //        Blame.LoadBlame(revision, children, fileName, FileChanges, BlameTab, Diff.Encoding, force: force);
-        //    }
-        //    else if (tabControl1.SelectedTab == ViewTab)
-        //    {
-        //        Validates.NotNull(fileName);
-        //        View.Encoding = Diff.Encoding;
-        //        var file = new GitItemStatus(name: fileName)
-        //        {
-        //            IsTracked = true,
-        //            IsSubmodule = GitModule.IsValidGitWorkingDir(_fullPathResolver.Resolve(fileName))
-        //        };
-        //        View.ViewGitItemRevisionAsync(file, revision.ObjectId);
-        //    }
-        //    else if (tabControl1.SelectedTab == DiffTab)
-        //    {
-        //        Validates.NotNull(fileName);
-        //        var file = new GitItemStatus(name: fileName)
-        //        {
-        //            IsTracked = true,
-        //            IsSubmodule = GitModule.IsValidGitWorkingDir(_fullPathResolver.Resolve(fileName))
-        //        };
-        //        var revisions = FileChanges.GetSelectedRevisions();
-        //        var item = new FileStatusItem(firstRev: revisions.Skip(1).LastOrDefault(), secondRev: revisions.FirstOrDefault(), file);
-        //        Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
-        //    }
-        //    else if (tabControl1.SelectedTab == CommitInfoTabPage)
-        //    {
-        //        CommitDiff.SetRevision(revision.ObjectId, fileName);
-        //    }
-
-        //    _buildReportTabPageExtension ??= new BuildReportTabPageExtension(() => Module, tabControl1, _buildReportTabCaption.Text);
-
-        //    _buildReportTabPageExtension.FillBuildReport(selectedRevisions.Count == 1 ? revision : null);
-        //}
         private void tvGitTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node?.Tag is GitItem gitItem)
