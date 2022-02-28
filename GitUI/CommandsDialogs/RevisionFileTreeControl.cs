@@ -18,7 +18,8 @@ using GitUI.UserControls;
 using GitUIPluginInterfaces;
 using Microsoft;
 using ResourceManager;
-using WordGitAddin;
+using static GitUI.CommandsDialogs.WordGitForm;
+
 namespace GitUI.CommandsDialogs
 {
     public partial class RevisionFileTreeControl : GitModuleControl
@@ -59,6 +60,8 @@ See the changes in the commit form.");
         private Action? _refreshGitStatus;
         private readonly AsyncLoader _asyncLoader = new();
 
+        
+
         public RevisionFileTreeControl()
         {
             InitializeComponent();
@@ -69,6 +72,15 @@ See the changes in the commit form.");
             _revisionFileTreeController = new RevisionFileTreeController(() => Module.WorkingDir,
                                                                          new GitRevisionInfoProvider(() => Module),
                                                                          new FileAssociatedIconProvider());
+
+            FileHistory.DoubleClickRevision += FileHistory_DoubleClickRevision;
+                //new System.EventHandler<GitUI.UserControls.RevisionGrid.DoubleClickRevisionEventArgs>(UpdateSelectedFileViewers); 
+        }
+
+        private void FileHistory_DoubleClickRevision(object sender, UserControls.RevisionGrid.DoubleClickRevisionEventArgs e)
+        {
+        //    throw new NotImplementedException();
+            UpdateSelectedFileViewers();
         }
 
         public void Bind(Action refreshGitStatus)
@@ -225,9 +237,17 @@ See the changes in the commit form.");
             }
         }
 
+        internal void SetDiffTool(WordGitForm.FileHistoryDiff? fileHistoryDiff)
+        {
+            // throw new NotImplementedException();
+            FileHistoryDiff = fileHistoryDiff;
+        }
+
         #region Hotkey commands
 
         public static readonly string HotkeySettingsName = "RevisionFileTree";
+
+        public FileHistoryDiff? FileHistoryDiff { get; private set; }
 
         public enum Command
         {
@@ -494,8 +514,10 @@ See the changes in the commit form.");
             var revisions = FileHistory.GetSelectedRevisions();
             var item = new FileStatusItem(firstRev: revisions.Skip(1).LastOrDefault(), secondRev: revisions.FirstOrDefault(), file);
             //TODO: call the addin's Diff vsto;
-            Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
-            WordGitAddin.Globals
+           // Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
+            //WordGitAddin.Globals
+            FileHistoryDiff?.Invoke(item);
+
 
         }
 

@@ -152,9 +152,9 @@ namespace WordGitAddin.Controls
             var commands = new GitUICommands(GetWorkingDir(args));
 
             // commands.StartBrowseDialog();
-            var formBrowser = new WordGitForm(commands, "");
-            EmbedForm(formBrowser);
-
+            var wordGitForm = new WordGitForm(commands, "");
+            wordGitForm.fileHistoryDiff = Globals.ThisAddIn.WordFileDiff;
+            EmbedForm(wordGitForm);
         }
 
         private static string? GetWorkingDir(string[] args)

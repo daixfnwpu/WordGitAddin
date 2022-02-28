@@ -99,6 +99,9 @@ namespace GitUI.CommandsDialogs
 
         private TabPage? _consoleTabPage;
 
+        public delegate void FileHistoryDiff(FileStatusItem fileStatus);
+        public FileHistoryDiff fileHistoryDiff;
+
         [Flags]
         private enum UpdateTargets
         {
@@ -125,7 +128,7 @@ namespace GitUI.CommandsDialogs
             : base(commands)
         {
             InitializeComponent();
-
+            
             MainSplitContainer.Visible = false;
             MainSplitContainer.SplitterDistance = DpiUtil.Scale(260);
 
@@ -145,7 +148,7 @@ namespace GitUI.CommandsDialogs
             repoObjectsTree.Initialize(_aheadBehindDataProvider, null, RevisionGrid, RevisionGrid, RevisionGrid);
             revisionDiff.Bind(RevisionGrid, fileTree, () => RequestRefresh());
             fileTree.Bind(() => RequestRefresh());
-
+            fileTree.SetDiffTool(fileHistoryDiff);
             var repositoryDescriptionProvider = new RepositoryDescriptionProvider(new GitDirectoryResolver());
             _appTitleGenerator = new AppTitleGenerator(repositoryDescriptionProvider);
             _windowsJumpListManager = new WindowsJumpListManager(repositoryDescriptionProvider);

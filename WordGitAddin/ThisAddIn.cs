@@ -12,6 +12,7 @@ using Microsoft.Office.Interop.Word;
 using OfficeTools = Microsoft.Office.Tools;
 using WordTools = Microsoft.Office.Tools.Word;
 using System.IO;
+using GitUI.UserControls;
 
 namespace WordGitAddin
 {
@@ -196,9 +197,9 @@ namespace WordGitAddin
             return CustomWordGitRibbon;
         }
 
-        private void WordFileDiff(string fileRevsion1,string fileRevsion2)
+        public void WordFileDiff(FileStatusItem fileStatus)
         {
-
+            throw new NotImplementedException(" wordFileDiff not implemented");
         }
         private bool DocConversToDocx(string filepath)
         {

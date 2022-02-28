@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using GitCommands;
+using GitUI.UserControls;
 using ResourceManager;
 
 namespace GitUI
@@ -85,6 +86,9 @@ namespace GitUI
         [Browsable(false)]
         public GitUICommands UICommands => UICommandsSource.UICommands;
 
+        //public delegate void FileHistoryDiffType(FileStatusItem fileStatus);
+        //public FileHistoryDiffType FileHistoryDiff { get; set; }
+
         /// <summary>
         /// Gets the UI commands, if they've initialised.
         /// </summary>
@@ -101,7 +105,7 @@ namespace GitUI
         }
 
         /// <summary>Gets the <see cref="UICommands"/>' <see cref="GitModule"/> reference.</summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false)]
         public GitModule Module => UICommands.Module;
 
