@@ -319,7 +319,31 @@ namespace WordGitAddin
                 }
             }
 
+            Word.Application wordApp = new Word.Application();
+            wordApp.Visible = false;
+            object wordTrue = (object)true;
+            object wordFalse = (object)false;
+            object fileToOpen = @"C:\Temp\1.docx";
+            object missing = Type.Missing;
+            Word.Document doc1 = wordApp.Documents.Open(ref fileToOpen,
+                   ref missing, ref wordFalse, ref wordFalse, ref missing,
+                   ref missing, ref missing, ref missing, ref missing,
+                   ref missing, ref missing, ref wordTrue, ref missing,
+                   ref missing, ref missing, ref missing);
 
+            object fileToOpen1 = @"C:\Temp\2.docx";
+            Word.Document doc2 = wordApp.Documents.Open(ref fileToOpen1,
+                   ref missing, ref wordFalse, ref wordFalse, ref missing,
+                   ref missing, ref missing, ref missing, ref missing,
+                   ref missing, ref missing, ref missing, ref missing,
+                   ref missing, ref missing, ref missing);
+
+            Word.Document doc = wordApp.CompareDocuments(doc1, doc2, Word.WdCompareDestination.wdCompareDestinationNew, Word.WdGranularity.wdGranularityWordLevel,
+                true, true, true, true, true, true, true, true, true, true, "", true);
+
+            doc1.Close(ref missing, ref missing, ref missing);
+            doc2.Close(ref missing, ref missing, ref missing);
+            wordApp.Visible = true;
 
         }
         private bool DocConversToDocx(string filepath)
