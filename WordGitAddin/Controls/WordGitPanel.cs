@@ -153,7 +153,8 @@ namespace WordGitAddin.Controls
 
             // commands.StartBrowseDialog();
             var wordGitForm = new WordGitForm(commands, "");
-            wordGitForm.fileHistoryDiff = Globals.ThisAddIn.WordFileDiff;
+            wordGitForm.setDiffTool(Globals.ThisAddIn.WordFileDiff);
+            //wordGitForm.fileHistoryDiff = Globals.ThisAddIn.WordFileDiff;
             EmbedForm(wordGitForm);
         }
 

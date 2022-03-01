@@ -517,8 +517,6 @@ See the changes in the commit form.");
            // Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
             //WordGitAddin.Globals
             FileHistoryDiff?.Invoke(item);
-
-
         }
 
         private void tvGitTree_AfterSelect(object sender, TreeViewEventArgs e)

@@ -99,7 +99,7 @@ namespace GitUI.CommandsDialogs
 
         private TabPage? _consoleTabPage;
 
-        public delegate void FileHistoryDiff(FileStatusItem fileStatus);
+        public delegate Task FileHistoryDiff(FileStatusItem fileStatus);
         public FileHistoryDiff fileHistoryDiff;
 
         [Flags]
@@ -148,7 +148,6 @@ namespace GitUI.CommandsDialogs
             repoObjectsTree.Initialize(_aheadBehindDataProvider, null, RevisionGrid, RevisionGrid, RevisionGrid);
             revisionDiff.Bind(RevisionGrid, fileTree, () => RequestRefresh());
             fileTree.Bind(() => RequestRefresh());
-            fileTree.SetDiffTool(fileHistoryDiff);
             var repositoryDescriptionProvider = new RepositoryDescriptionProvider(new GitDirectoryResolver());
             _appTitleGenerator = new AppTitleGenerator(repositoryDescriptionProvider);
             _windowsJumpListManager = new WindowsJumpListManager(repositoryDescriptionProvider);
@@ -392,6 +391,12 @@ namespace GitUI.CommandsDialogs
                 MainSplitContainer.Panel1.Padding = new Padding(1);
                 RevisionsSplitContainer.Padding = new Padding(1);
             }
+        }
+
+        public void setDiffTool(FileHistoryDiff wordFileDiff)
+        {
+          fileHistoryDiff = wordFileDiff;
+          fileTree.SetDiffTool(fileHistoryDiff);
         }
 
         protected override void Dispose(bool disposing)
