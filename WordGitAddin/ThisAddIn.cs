@@ -207,12 +207,14 @@ namespace WordGitAddin
 
         private void OpenInWord(string filename)
         {
-            Application.Documents.Open(filename);
+            
             if (Application.ActiveDocument is not null)
             {
                 Application.ActiveDocument.Close();
+              // Application.ActiveDocument.AcceptAllRevisions();
             }
-            Application.Documents.Open(filename);
+            // Application.Documents.Open(filename);
+            Application.Documents.Open(filename, ReadOnly: true).Activate();
         }
         public Task FileOpenInWordAsync(string  filename)
         {
