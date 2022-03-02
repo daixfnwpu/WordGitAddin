@@ -591,8 +591,16 @@ namespace GitCommands
                 }
             }
 
-            using var stream = File.Create(saveAs);
-            stream.Write(blobData, 0, blobData.Length);
+            try
+            {
+                using var stream = File.Create(saveAs);
+                stream.Write(blobData, 0, blobData.Length);
+            }
+            catch (Exception ex)
+            {
+                //Logging.LogException(ex);
+                return;
+            }
         }
 
         private static string GetSide(string side)

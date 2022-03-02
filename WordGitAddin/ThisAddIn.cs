@@ -207,15 +207,30 @@ namespace WordGitAddin
 
         private void OpenInWord(string filename)
         {
-            
-            if (Application.ActiveDocument is not null)
+            var activeDocument = Application.ActiveDocument;
+            var activeDocumentHost = Globals.Factory.GetVstoObject(activeDocument);
+            activeDocumentHost.BeforeSave += ActiveDocumentHost_BeforeSave;
+            if (activeDocument is not null)
             {
-                Application.ActiveDocument.Close();
-              // Application.ActiveDocument.AcceptAllRevisions();
+               activeDocument.Close();
             }
-            // Application.Documents.Open(filename);
-            Application.Documents.Open(filename, ReadOnly: true).Activate();
+            Application.Documents.Open(filename); 
         }
+        private void OpenInWordReadOnly(string filename)
+        {
+            Application.Documents.Open(filename, ReadOnly:true);
+        }
+        private void ActiveDocumentHost_BeforeSave(object sender, SaveEventArgs e)
+        {
+            if (e.Cancel)
+            {
+                return;
+            } else
+            {
+                Console.WriteLine(Application.ActiveDocument.Path);
+            }
+        }
+
         public Task FileOpenInWordAsync(string  filename)
         {
             OpenInWord(filename);
