@@ -59,8 +59,8 @@ See the changes in the commit form.");
             = RememberFileContextMenuController.Default;
         private Action? _refreshGitStatus;
         private readonly AsyncLoader _asyncLoader = new();
-
-        
+        public delegate Task FileOpenInWord(string filename);
+        public FileOpenInWord fileOpenInWord;
 
         public RevisionFileTreeControl()
         {
@@ -491,6 +491,12 @@ See the changes in the commit form.");
                 return res;
             }
         }
+
+        internal void setFileOpenInWord(FileOpenInWord fileOpenInWord)
+        {
+            this.fileOpenInWord = fileOpenInWord;
+        }
+
         private void UpdateSelectedFileViewers(bool force = false)
         {
             var selectedRevisions = FileHistory.GetSelectedRevisions();
@@ -851,10 +857,11 @@ See the changes in the commit form.");
         private void openFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fileName = SaveSelectedItemToTempFile();
-            if (fileName is not null)
-            {
-                OsShellUtil.Open(fileName);
-            }
+            //if (fileName is not null)
+            //{
+            //    OsShellUtil.Open(fileName);
+            //}
+            fileOpenInWord(fileName);
         }
 
         private void openSubmoduleMenuItem_Click(object sender, EventArgs e)

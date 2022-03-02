@@ -43,6 +43,7 @@ using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using ResourceManager;
+using static GitUI.CommandsDialogs.RevisionFileTreeControl;
 
 namespace GitUI.CommandsDialogs
 {
@@ -391,6 +392,11 @@ namespace GitUI.CommandsDialogs
                 MainSplitContainer.Panel1.Padding = new Padding(1);
                 RevisionsSplitContainer.Padding = new Padding(1);
             }
+        }
+
+        public void setFileOpenInWord(FileOpenInWord fileOpenInWord)
+        {
+            fileTree.setFileOpenInWord(fileOpenInWord);
         }
 
         public void setDiffTool(FileHistoryDiff wordFileDiff)

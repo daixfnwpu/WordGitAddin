@@ -205,119 +205,133 @@ namespace WordGitAddin
             return CustomWordGitRibbon;
         }
 
+        private void OpenInWord(string filename)
+        {
+            Application.Documents.Open(filename);
+            if (Application.ActiveDocument is not null)
+            {
+                Application.ActiveDocument.Close();
+            }
+            Application.Documents.Open(filename);
+        }
+        public Task FileOpenInWordAsync(string  filename)
+        {
+            OpenInWord(filename);
+            return Task.CompletedTask;
+        }
         public Task WordFileDiff(FileStatusItem item)
         {
-            string defaultText = "";
-            System.Action? openWithDiffTool = null;
-            if (item?.Item.IsStatusOnly ?? false)
-            {
-                // Present error (e.g. parsing Git)
-                return fileViewer.ViewTextAsync(item.Item.Name, item.Item.ErrorMessage ?? "");
-            }
+            //string defaultText = "";
+            //System.Action? openWithDiffTool = null;
+            //if (item?.Item.IsStatusOnly ?? false)
+            //{
+            //    // Present error (e.g. parsing Git)
+            //    return fileViewer.ViewTextAsync(item.Item.Name, item.Item.ErrorMessage ?? "");
+            //}
 
-            if (item?.Item is null || item.SecondRevision?.ObjectId is null)
-            {
-                if (!string.IsNullOrWhiteSpace(defaultText))
-                {
-                    return fileViewer.ViewTextAsync(item?.Item?.Name, defaultText);
-                }
+            //if (item?.Item is null || item.SecondRevision?.ObjectId is null)
+            //{
+            //    if (!string.IsNullOrWhiteSpace(defaultText))
+            //    {
+            //        return fileViewer.ViewTextAsync(item?.Item?.Name, defaultText);
+            //    }
 
-                fileViewer.Clear();
-                return Task.CompletedTask;
-            }
+            //    fileViewer.Clear();
+            //    return Task.CompletedTask;
+            //}
 
-            var firstId = item.FirstRevision?.ObjectId ?? item.SecondRevision.FirstParentId;
+            //var firstId = item.FirstRevision?.ObjectId ?? item.SecondRevision.FirstParentId;
 
-            openWithDiffTool ??= OpenWithDiffTool;
+            //openWithDiffTool ??= OpenWithDiffTool;
 
-            if (item.Item.IsNew || firstId is null || FileHelper.IsImage(item.Item.Name))
-            {
-                // View blob guid from revision, or file for worktree
-                return fileViewer.ViewGitItemRevisionAsync(item.Item, item.SecondRevision.ObjectId, openWithDiffTool);
-            }
+            //if (item.Item.IsNew || firstId is null || FileHelper.IsImage(item.Item.Name))
+            //{
+            //    // View blob guid from revision, or file for worktree
+            //    return fileViewer.ViewGitItemRevisionAsync(item.Item, item.SecondRevision.ObjectId, openWithDiffTool);
+            //}
 
-            if (item.Item.IsRangeDiff)
-            {
-                // This command may take time, give an indication of what is going on
-                // The sha are incorrect if baseA/baseB is set, to simplify the presentation
-                fileViewer.ViewText("range-diff.sh", $"git range-diff {firstId}...{item.SecondRevision.ObjectId}");
+            //if (item.Item.IsRangeDiff)
+            //{
+            //    // This command may take time, give an indication of what is going on
+            //    // The sha are incorrect if baseA/baseB is set, to simplify the presentation
+            //    fileViewer.ViewText("range-diff.sh", $"git range-diff {firstId}...{item.SecondRevision.ObjectId}");
 
-                string output = fileViewer.Module.GetRangeDiff(
-                        firstId,
-                        item.SecondRevision.ObjectId,
-                        item.BaseA,
-                        item.BaseB,
-                        fileViewer.GetExtraDiffArguments(isRangeDiff: true));
+            //    string output = fileViewer.Module.GetRangeDiff(
+            //            firstId,
+            //            item.SecondRevision.ObjectId,
+            //            item.BaseA,
+            //            item.BaseB,
+            //            fileViewer.GetExtraDiffArguments(isRangeDiff: true));
 
-                // Try set highlighting from first found filename
-                var match = new Regex(@"\n\s*(@@|##)\s+(?<file>[^#:\n]+)").Match(output ?? "");
-                var filename = match.Groups["file"].Success ? match.Groups["file"].Value : item.Item.Name;
+            //    // Try set highlighting from first found filename
+            //    var match = new Regex(@"\n\s*(@@|##)\s+(?<file>[^#:\n]+)").Match(output ?? "");
+            //    var filename = match.Groups["file"].Success ? match.Groups["file"].Value : item.Item.Name;
 
-                return fileViewer.ViewRangeDiffAsync(filename, output ?? defaultText);
-            }
+            //    return fileViewer.ViewRangeDiffAsync(filename, output ?? defaultText);
+            //}
 
-            string selectedPatch = GetSelectedPatch(fileViewer, firstId, item.SecondRevision.ObjectId, item.Item)
-                ?? defaultText;
+            //string selectedPatch = GetSelectedPatch(fileViewer, firstId, item.SecondRevision.ObjectId, item.Item)
+            //    ?? defaultText;
 
-            return item.Item.IsSubmodule
-                ? fileViewer.ViewTextAsync(item.Item.Name, text: selectedPatch, openWithDifftool: openWithDiffTool)
-                : fileViewer.ViewPatchAsync(item, text: selectedPatch, openWithDifftool: openWithDiffTool);
+            //return item.Item.IsSubmodule
+            //    ? fileViewer.ViewTextAsync(item.Item.Name, text: selectedPatch, openWithDifftool: openWithDiffTool)
+            //    : fileViewer.ViewPatchAsync(item, text: selectedPatch, openWithDifftool: openWithDiffTool);
 
-            void OpenWithDiffTool()
-            {
-                fileViewer.Module.OpenWithDifftool(
-                    item.Item.Name,
-                    item.Item.OldName,
-                    firstId?.ToString(),
-                    item.SecondRevision.ToString(),
-                    isTracked: item.Item.IsTracked);
-            }
+            //void OpenWithDiffTool()
+            //{
+            //    fileViewer.Module.OpenWithDifftool(
+            //        item.Item.Name,
+            //        item.Item.OldName,
+            //        firstId?.ToString(),
+            //        item.SecondRevision.ToString(),
+            //        isTracked: item.Item.IsTracked);
+            //}
 
-            static string? GetSelectedPatch(
-                GitUI.Editor.FileViewer fileViewer,
-                ObjectId firstId,
-                ObjectId selectedId,
-                GitItemStatus file)
-            {
-                if (firstId == ObjectId.CombinedDiffId)
-                {
-                    var diffOfConflict = fileViewer.Module.GetCombinedDiffContent(selectedId, file.Name,
-                        fileViewer.GetExtraDiffArguments(), fileViewer.Encoding);
+            //static string? GetSelectedPatch(
+            //    GitUI.Editor.FileViewer fileViewer,
+            //    ObjectId firstId,
+            //    ObjectId selectedId,
+            //    GitItemStatus file)
+            //{
+            //    if (firstId == ObjectId.CombinedDiffId)
+            //    {
+            //        var diffOfConflict = fileViewer.Module.GetCombinedDiffContent(selectedId, file.Name,
+            //            fileViewer.GetExtraDiffArguments(), fileViewer.Encoding);
 
-                    return string.IsNullOrWhiteSpace(diffOfConflict)
-                        ? TranslatedStrings.UninterestingDiffOmitted
-                        : diffOfConflict;
-                }
+            //        return string.IsNullOrWhiteSpace(diffOfConflict)
+            //            ? TranslatedStrings.UninterestingDiffOmitted
+            //            : diffOfConflict;
+            //    }
 
-                if (file.IsSubmodule)
-                {
-                    var status = ThreadHelper.JoinableTaskFactory.Run(file.GetSubmoduleStatusAsync!);
-                    return status is not null
-                        ? LocalizationHelpers.ProcessSubmoduleStatus(fileViewer.Module, status)
-                        : $"Failed to get status for submodule \"{file.Name}\"";
-                }
+            //    if (file.IsSubmodule)
+            //    {
+            //        var status = ThreadHelper.JoinableTaskFactory.Run(file.GetSubmoduleStatusAsync!);
+            //        return status is not null
+            //            ? LocalizationHelpers.ProcessSubmoduleStatus(fileViewer.Module, status)
+            //            : $"Failed to get status for submodule \"{file.Name}\"";
+            //    }
 
-                var patch = GetItemPatch(fileViewer.Module, file, firstId, selectedId,
-                    fileViewer.GetExtraDiffArguments(), fileViewer.Encoding);
+            //    var patch = GetItemPatch(fileViewer.Module, file, firstId, selectedId,
+            //        fileViewer.GetExtraDiffArguments(), fileViewer.Encoding);
 
-                return file.IsSubmodule
-                    ? LocalizationHelpers.ProcessSubmodulePatch(fileViewer.Module, file.Name, patch)
-                    : patch?.Text;
+            //    return file.IsSubmodule
+            //        ? LocalizationHelpers.ProcessSubmodulePatch(fileViewer.Module, file.Name, patch)
+            //        : patch?.Text;
 
-                static Patch? GetItemPatch(
-                    GitModule module,
-                    GitItemStatus file,
-                    ObjectId? firstId,
-                    ObjectId? secondId,
-                    string diffArgs,
-                    Encoding encoding)
-                {
-                    // Files with tree guid should be presented with normal diff
-                    var isTracked = file.IsTracked || (file.TreeGuid is not null && secondId is not null);
+            //    static Patch? GetItemPatch(
+            //        GitModule module,
+            //        GitItemStatus file,
+            //        ObjectId? firstId,
+            //        ObjectId? secondId,
+            //        string diffArgs,
+            //        Encoding encoding)
+            //    {
+            //        // Files with tree guid should be presented with normal diff
+            //        var isTracked = file.IsTracked || (file.TreeGuid is not null && secondId is not null);
 
-                    return module.GetSingleDiff(firstId, secondId, file.Name, file.OldName, diffArgs, encoding, true, isTracked);
-                }
-            }
+            //        return module.GetSingleDiff(firstId, secondId, file.Name, file.OldName, diffArgs, encoding, true, isTracked);
+            //    }
+            //}
 
             Word.Application wordApp = new Word.Application();
             wordApp.Visible = false;
@@ -344,7 +358,7 @@ namespace WordGitAddin
             doc1.Close(ref missing, ref missing, ref missing);
             doc2.Close(ref missing, ref missing, ref missing);
             wordApp.Visible = true;
-
+            return Task.CompletedTask;
         }
         private bool DocConversToDocx(string filepath)
         {
