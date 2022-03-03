@@ -45,6 +45,8 @@ namespace GitCommands
         private readonly GetAllChangedFilesOutputParser _getAllChangedFilesOutputParser;
         private readonly IGitCommandRunner _gitCommandRunner;
         private readonly IExecutable _gitExecutable;
+        public delegate Task FileHistoryDiff(string firstFileName, string secondFileName);
+        public static FileHistoryDiff? fileHistoryDiff;
 
         public GitModule(string? workingDir)
         {
@@ -124,6 +126,11 @@ namespace GitCommands
                 static bool HasGitModulesFile(string path)
                     => File.Exists(Path.Combine(path, ".gitmodules")) && IsValidGitWorkingDir(path);
             }
+        }
+
+        internal void setDiffTool(FileHistoryDiff wordFileDiff)
+        {
+            fileHistoryDiff = wordFileDiff;
         }
 
         /// <summary>
@@ -3576,8 +3583,28 @@ namespace GitCommands
         {
             return OpenWithDifftool(null, firstRevision: firstRevision, secondRevision: secondRevision, extraDiffArguments: "--dir-diff", customTool: customTool);
         }
-
         public string OpenWithDifftool(string? filename, string? oldFileName = "", string? firstRevision = GitRevision.IndexGuid, string? secondRevision = GitRevision.WorkTreeGuid, string? extraDiffArguments = null, bool isTracked = true, string? customTool = null)
+        {
+            if (!string.IsNullOrWhiteSpace(filename))
+            {
+                var fileName = filename.SubstringAfterLast('/').SubstringAfterLast('\\');
+                string firstTmpFileName = (Path.GetTempPath() + firstRevision.Substring(0, 6) + fileName).ToNativePath();
+                string secondTmpFileName = (Path.GetTempPath() + secondRevision.Substring(0, 6) + fileName).ToNativePath();
+                try
+                {
+                    SaveBlobAs(firstTmpFileName, firstRevision);
+                    SaveBlobAs(secondTmpFileName, secondRevision);
+                }catch (Exception ex)
+                {
+
+                }
+                // TODO call the vsto addin delegate;
+                fileHistoryDiff.Invoke(firstTmpFileName, secondTmpFileName);
+            }
+            return "";
+
+        }
+        public string OpenWithDifftool_GitToll (string? filename, string? oldFileName = "", string? firstRevision = GitRevision.IndexGuid, string? secondRevision = GitRevision.WorkTreeGuid, string? extraDiffArguments = null, bool isTracked = true, string? customTool = null)
         {
             _gitCommandRunner.RunDetached(new GitArgumentBuilder("difftool")
             {
@@ -3587,7 +3614,7 @@ namespace GitCommands
                 extraDiffArguments,
                 _revisionDiffProvider.Get(firstRevision, secondRevision, filename, oldFileName, isTracked)
             });
-
+              
             // This method is supposed to return an error message, but the detached process is untracked
             // TODO track the process somehow, so errors can be reported
             return "";

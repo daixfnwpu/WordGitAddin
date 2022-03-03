@@ -100,7 +100,7 @@ namespace GitUI.CommandsDialogs
 
         private TabPage? _consoleTabPage;
 
-        public delegate Task FileHistoryDiff(FileStatusItem fileStatus);
+        public delegate Task FileHistoryDiff(string firstFileName,string secondFileName);
         public FileHistoryDiff fileHistoryDiff;
 
         [Flags]

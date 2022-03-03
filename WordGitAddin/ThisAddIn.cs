@@ -224,7 +224,7 @@ namespace WordGitAddin
         {
             // var Doc = sender as WordTools.Document;
             if (saveFile == null)
-                saveFile = @"C:\Users\Administrator\Desktop\tmp\tmpnew.docx");
+                saveFile = @"C:\Users\Administrator\Desktop\tmp\tmpnew.docx";
             doc.SaveAs2(saveFile);
         }
         private void NewDocHost_BeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
@@ -262,135 +262,20 @@ namespace WordGitAddin
             OpenInWord(filename);
             return Task.CompletedTask;
         }
-        public Task WordFileDiff(FileStatusItem item)
+        public Task WordFileDiff(string firstFileName,string secondFileName)
         {
-            //string defaultText = "";
-            //System.Action? openWithDiffTool = null;
-            //if (item?.Item.IsStatusOnly ?? false)
-            //{
-            //    // Present error (e.g. parsing Git)
-            //    return fileViewer.ViewTextAsync(item.Item.Name, item.Item.ErrorMessage ?? "");
-            //}
-
-            //if (item?.Item is null || item.SecondRevision?.ObjectId is null)
-            //{
-            //    if (!string.IsNullOrWhiteSpace(defaultText))
-            //    {
-            //        return fileViewer.ViewTextAsync(item?.Item?.Name, defaultText);
-            //    }
-
-            //    fileViewer.Clear();
-            //    return Task.CompletedTask;
-            //}
-
-            //var firstId = item.FirstRevision?.ObjectId ?? item.SecondRevision.FirstParentId;
-
-            //openWithDiffTool ??= OpenWithDiffTool;
-
-            //if (item.Item.IsNew || firstId is null || FileHelper.IsImage(item.Item.Name))
-            //{
-            //    // View blob guid from revision, or file for worktree
-            //    return fileViewer.ViewGitItemRevisionAsync(item.Item, item.SecondRevision.ObjectId, openWithDiffTool);
-            //}
-
-            //if (item.Item.IsRangeDiff)
-            //{
-            //    // This command may take time, give an indication of what is going on
-            //    // The sha are incorrect if baseA/baseB is set, to simplify the presentation
-            //    fileViewer.ViewText("range-diff.sh", $"git range-diff {firstId}...{item.SecondRevision.ObjectId}");
-
-            //    string output = fileViewer.Module.GetRangeDiff(
-            //            firstId,
-            //            item.SecondRevision.ObjectId,
-            //            item.BaseA,
-            //            item.BaseB,
-            //            fileViewer.GetExtraDiffArguments(isRangeDiff: true));
-
-            //    // Try set highlighting from first found filename
-            //    var match = new Regex(@"\n\s*(@@|##)\s+(?<file>[^#:\n]+)").Match(output ?? "");
-            //    var filename = match.Groups["file"].Success ? match.Groups["file"].Value : item.Item.Name;
-
-            //    return fileViewer.ViewRangeDiffAsync(filename, output ?? defaultText);
-            //}
-
-            //string selectedPatch = GetSelectedPatch(fileViewer, firstId, item.SecondRevision.ObjectId, item.Item)
-            //    ?? defaultText;
-
-            //return item.Item.IsSubmodule
-            //    ? fileViewer.ViewTextAsync(item.Item.Name, text: selectedPatch, openWithDifftool: openWithDiffTool)
-            //    : fileViewer.ViewPatchAsync(item, text: selectedPatch, openWithDifftool: openWithDiffTool);
-
-            //void OpenWithDiffTool()
-            //{
-            //    fileViewer.Module.OpenWithDifftool(
-            //        item.Item.Name,
-            //        item.Item.OldName,
-            //        firstId?.ToString(),
-            //        item.SecondRevision.ToString(),
-            //        isTracked: item.Item.IsTracked);
-            //}
-
-            //static string? GetSelectedPatch(
-            //    GitUI.Editor.FileViewer fileViewer,
-            //    ObjectId firstId,
-            //    ObjectId selectedId,
-            //    GitItemStatus file)
-            //{
-            //    if (firstId == ObjectId.CombinedDiffId)
-            //    {
-            //        var diffOfConflict = fileViewer.Module.GetCombinedDiffContent(selectedId, file.Name,
-            //            fileViewer.GetExtraDiffArguments(), fileViewer.Encoding);
-
-            //        return string.IsNullOrWhiteSpace(diffOfConflict)
-            //            ? TranslatedStrings.UninterestingDiffOmitted
-            //            : diffOfConflict;
-            //    }
-
-            //    if (file.IsSubmodule)
-            //    {
-            //        var status = ThreadHelper.JoinableTaskFactory.Run(file.GetSubmoduleStatusAsync!);
-            //        return status is not null
-            //            ? LocalizationHelpers.ProcessSubmoduleStatus(fileViewer.Module, status)
-            //            : $"Failed to get status for submodule \"{file.Name}\"";
-            //    }
-
-            //    var patch = GetItemPatch(fileViewer.Module, file, firstId, selectedId,
-            //        fileViewer.GetExtraDiffArguments(), fileViewer.Encoding);
-
-            //    return file.IsSubmodule
-            //        ? LocalizationHelpers.ProcessSubmodulePatch(fileViewer.Module, file.Name, patch)
-            //        : patch?.Text;
-
-            //    static Patch? GetItemPatch(
-            //        GitModule module,
-            //        GitItemStatus file,
-            //        ObjectId? firstId,
-            //        ObjectId? secondId,
-            //        string diffArgs,
-            //        Encoding encoding)
-            //    {
-            //        // Files with tree guid should be presented with normal diff
-            //        var isTracked = file.IsTracked || (file.TreeGuid is not null && secondId is not null);
-
-            //        return module.GetSingleDiff(firstId, secondId, file.Name, file.OldName, diffArgs, encoding, true, isTracked);
-            //    }
-            //}
-
-            Word.Application wordApp = new Word.Application();
+            Word.Application wordApp = Application;// new Word.Application();
             wordApp.DocumentBeforeSave += WordApp_DocumentBeforeSave;
-            wordApp.Visible = false;
+           // wordApp.Visible = false;
             object wordTrue = (object)true;
             object wordFalse = (object)false;
-            object fileToOpen = @"C:\Temp\1.docx";
             object missing = Type.Missing;
-            Word.Document doc1 = wordApp.Documents.Open(ref fileToOpen,
+            Word.Document doc1 = wordApp.Documents.Open(firstFileName,
                    ref missing, ref wordFalse, ref wordFalse, ref missing,
                    ref missing, ref missing, ref missing, ref missing,
                    ref missing, ref missing, ref wordTrue, ref missing,
                    ref missing, ref missing, ref missing);
-
-            object fileToOpen1 = @"C:\Temp\2.docx";
-            Word.Document doc2 = wordApp.Documents.Open(ref fileToOpen1,
+            Word.Document doc2 = wordApp.Documents.Open(secondFileName,
                    ref missing, ref wordFalse, ref wordFalse, ref missing,
                    ref missing, ref missing, ref missing, ref missing,
                    ref missing, ref missing, ref missing, ref missing,
@@ -401,7 +286,7 @@ namespace WordGitAddin
 
             doc1.Close(ref missing, ref missing, ref missing);
             doc2.Close(ref missing, ref missing, ref missing);
-            wordApp.Visible = true;
+          //  wordApp.Visible = true;
             return Task.CompletedTask;
         }
 

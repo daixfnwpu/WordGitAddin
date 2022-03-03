@@ -518,11 +518,25 @@ See the changes in the commit form.");
                 IsSubmodule = GitModule.IsValidGitWorkingDir(_fullPathResolver.Resolve(fileName))
             };
             var revisions = FileHistory.GetSelectedRevisions();
+            var firstRev = revisions.Skip(1).LastOrDefault().Guid;
+            var secondRev = revisions.FirstOrDefault().Guid;
             var item = new FileStatusItem(firstRev: revisions.Skip(1).LastOrDefault(), secondRev: revisions.FirstOrDefault(), file);
             //TODO: call the addin's Diff vsto;
            // Diff.ViewChangesAsync(item, defaultText: "You need to select at least one revision to view diff.");
             //WordGitAddin.Globals
-            FileHistoryDiff?.Invoke(item);
+           //var fileName = filename.SubstringAfterLast('/').SubstringAfterLast('\\');
+            string firstTmpFileName = (Path.GetTempPath() + firstRev.Substring(0, 6) + fileName).ToNativePath();
+            string secondTmpFileName = (Path.GetTempPath() + secondRev.Substring(0, 6) + fileName).ToNativePath();
+            //TODO: neeed to check have this file?
+            try
+            {
+                Module.SaveBlobAs(firstTmpFileName, firstRev);
+                Module.SaveBlobAs(secondTmpFileName, secondRev);
+            }catch (Exception ex)
+            {
+
+            }
+            FileHistoryDiff?.Invoke(firstTmpFileName,secondTmpFileName);
         }
 
         private void tvGitTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -890,7 +904,8 @@ See the changes in the commit form.");
         {
             if (tvGitTree.SelectedNode?.Tag is GitItem gitItem)
             {
-                Module.OpenWithDifftool(gitItem.FileName, firstRevision: _revision?.ObjectId?.ToString());
+                //Module.OpenWithDifftool(gitItem.FileName, firstRevision: _revision?.ObjectId?.ToString());
+                Module.OpenWithDifftool(gitItem.FileName, firstRevision: gitItem.Guid);
             }
         }
 
