@@ -208,30 +208,56 @@ namespace WordGitAddin
         private void OpenInWord(string filename)
         {
             var activeDocument = Application.ActiveDocument;
-            var activeDocumentHost = Globals.Factory.GetVstoObject(activeDocument);
-            activeDocumentHost.BeforeSave += ActiveDocumentHost_BeforeSave;
+            // var activeDocumentHost = Globals.Factory.GetVstoObject(activeDocument);
+            // activeDocumentHost.BeforeSave += ActiveDocumentHost_BeforeSave;
+            // Application.DocumentBeforeSave += WordApp_DocumentBeforeSave;
             if (activeDocument is not null)
             {
-               activeDocument.Close();
+                activeDocument.Close();
             }
-            Application.Documents.Open(filename); 
+            var newDoc = Application.Documents.Open(filename);
+            var newDocHost = Globals.Factory.GetVstoObject(newDoc);
+            newDocHost.BeforeSave += NewDocHost_BeforeSave;
+            newDocHost.BeforeClose += NewDocHost_BeforeClose;
         }
+        private void SaveDocumentToFile(WordTools.Document doc, string saveFile = null)
+        {
+            // var Doc = sender as WordTools.Document;
+            if (saveFile == null)
+                saveFile = @"C:\Users\Administrator\Desktop\tmp\tmpnew.docx");
+            doc.SaveAs2(saveFile);
+        }
+        private void NewDocHost_BeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var Doc = sender as WordTools.Document;
+            SaveDocumentToFile(Doc);
+            e.Cancel = true;
+        }
+
+        private void NewDocHost_BeforeSave(object sender, SaveEventArgs e)
+        {
+            var Doc = sender as WordTools.Document;
+            SaveDocumentToFile(Doc);
+            e.Cancel = true;
+        }
+
         private void OpenInWordReadOnly(string filename)
         {
-            Application.Documents.Open(filename, ReadOnly:true);
+            Application.Documents.Open(filename, ReadOnly: true);
         }
         private void ActiveDocumentHost_BeforeSave(object sender, SaveEventArgs e)
         {
             if (e.Cancel)
             {
                 return;
-            } else
+            }
+            else
             {
                 Console.WriteLine(Application.ActiveDocument.Path);
             }
         }
 
-        public Task FileOpenInWordAsync(string  filename)
+        public Task FileOpenInWordAsync(string filename)
         {
             OpenInWord(filename);
             return Task.CompletedTask;
@@ -351,6 +377,7 @@ namespace WordGitAddin
             //}
 
             Word.Application wordApp = new Word.Application();
+            wordApp.DocumentBeforeSave += WordApp_DocumentBeforeSave;
             wordApp.Visible = false;
             object wordTrue = (object)true;
             object wordFalse = (object)false;
@@ -377,6 +404,15 @@ namespace WordGitAddin
             wordApp.Visible = true;
             return Task.CompletedTask;
         }
+
+        private void WordApp_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
+        {
+            Doc.SaveAs2(@"C:\Users\Administrator\Desktop\tmp\tmp.docx");
+            SaveAsUI = false;
+            Cancel = true;
+            //throw new NotImplementedException();
+        }
+
         private bool DocConversToDocx(string filepath)
         {
             object oMissing = System.Reflection.Missing.Value;
