@@ -269,11 +269,11 @@ See the changes in the commit form.");
             switch ((Command)cmd)
             {
                 case Command.ShowHistory: fileHistoryToolStripMenuItem.PerformClick(); break;
-                case Command.Blame: blameToolStripMenuItem1.PerformClick(); break;
+             //   case Command.Blame: blameToolStripMenuItem1.PerformClick(); break;
                 case Command.OpenWithDifftool: openWithDifftoolToolStripMenuItem.PerformClick(); break;
                 case Command.OpenAsTempFile: openFileToolStripMenuItem.PerformClick(); break;
-                case Command.OpenAsTempFileWith: openFileWithToolStripMenuItem.PerformClick(); break;
-                case Command.EditFile: editCheckedOutFileToolStripMenuItem.PerformClick(); break;
+               // case Command.OpenAsTempFileWith: openFileWithToolStripMenuItem.PerformClick(); break;
+              //  case Command.EditFile: editCheckedOutFileToolStripMenuItem.PerformClick(); break;
                 default: return base.ExecuteCommand(cmd);
             }
 
@@ -284,11 +284,11 @@ See the changes in the commit form.");
         {
             Hotkeys = HotkeySettingsManager.LoadHotkeys(HotkeySettingsName);
             fileHistoryToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.ShowHistory);
-            blameToolStripMenuItem1.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.Blame);
+      //      blameToolStripMenuItem1.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.Blame);
             openWithDifftoolToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.OpenWithDifftool);
             openFileToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.OpenAsTempFile);
-            openFileWithToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.OpenAsTempFileWith);
-            editCheckedOutFileToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.EditFile);
+       //     openFileWithToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.OpenAsTempFileWith);
+        //    editCheckedOutFileToolStripMenuItem.ShortcutKeyDisplayString = GetShortcutKeyDisplayString(Command.EditFile);
             FileHistory.ReloadHotkeys();
         }
 
@@ -774,13 +774,13 @@ See the changes in the commit form.");
             var isExistingFileOrDirectory = gitItem is not null && FormBrowseUtil.IsFileOrDirectory(_fullPathResolver.Resolve(gitItem.FileName));
 
             var openSubVisible = gitItem?.ObjectType == GitObjectType.Commit && isExistingFileOrDirectory;
-            openSubmoduleMenuItem.Visible = openSubVisible;
+           // openSubmoduleMenuItem.Visible = openSubVisible;
             if (openSubVisible)
             {
-                if (!openSubmoduleMenuItem.Font.Bold)
-                {
-                    openSubmoduleMenuItem.Font = new Font(openSubmoduleMenuItem.Font, FontStyle.Bold);
-                }
+                //if (!openSubmoduleMenuItem.Font.Bold)
+                //{
+                //    openSubmoduleMenuItem.Font = new Font(openSubmoduleMenuItem.Font, FontStyle.Bold);
+                //}
 
                 if (fileHistoryToolStripMenuItem.Font.Bold)
                 {
@@ -793,58 +793,58 @@ See the changes in the commit form.");
             }
 
             // Diff with workTree (some tools like kdiff3 and meld allows diff to NUL)
-            resetToThisRevisionToolStripMenuItem.Visible = itemSelected && !Module.IsBareRepository();
-            toolStripSeparatorTopActions.Visible = gitItem is not null && ((gitItem.ObjectType == GitObjectType.Commit && isExistingFileOrDirectory)
-                                                                    || !Module.IsBareRepository());
+            //resetToThisRevisionToolStripMenuItem.Visible = itemSelected && !Module.IsBareRepository();
+            //toolStripSeparatorTopActions.Visible = gitItem is not null && ((gitItem.ObjectType == GitObjectType.Commit && isExistingFileOrDirectory)
+            //                                                        || !Module.IsBareRepository());
 
             // RememberFile diff can be done for folders too (as well as for submodules, but that is meaningless)
             // However diffs will open many windows that cannot be aborted, so it is blocked
             // Another reason is that file<->folder compare is not giving any result
             // (and diff is shared with Diff tab that has no notion of folders)
             openWithDifftoolToolStripMenuItem.Visible = isFile;
-            openWithToolStripMenuItem.Visible = isFile;
-            openWithToolStripMenuItem.Enabled = isExistingFileOrDirectory;
+            //openWithToolStripMenuItem.Visible = isFile;
+            //openWithToolStripMenuItem.Enabled = isExistingFileOrDirectory;
             Validates.NotNull(_revision);
             var fsi = _rememberFileContextMenuController.CreateFileStatusItem(gitItem?.FileName ?? "", _revision);
-            diffWithRememberedFileToolStripMenuItem.Visible = _rememberFileContextMenuController.RememberedDiffFileItem is not null;
-            diffWithRememberedFileToolStripMenuItem.Enabled = isFile && fsi != _rememberFileContextMenuController.RememberedDiffFileItem
-                                                                         && _rememberFileContextMenuController.ShouldEnableSecondItemDiff(fsi);
-            diffWithRememberedFileToolStripMenuItem.Text =
-                _rememberFileContextMenuController.RememberedDiffFileItem is not null
-                    ? string.Format(TranslatedStrings.DiffSelectedWithRememberedFile, _rememberFileContextMenuController.RememberedDiffFileItem.Item.Name)
-                    : string.Empty;
+            //diffWithRememberedFileToolStripMenuItem.Visible = _rememberFileContextMenuController.RememberedDiffFileItem is not null;
+            //diffWithRememberedFileToolStripMenuItem.Enabled = isFile && fsi != _rememberFileContextMenuController.RememberedDiffFileItem
+            //                                                             && _rememberFileContextMenuController.ShouldEnableSecondItemDiff(fsi);
+            //diffWithRememberedFileToolStripMenuItem.Text =
+            //    _rememberFileContextMenuController.RememberedDiffFileItem is not null
+            //        ? string.Format(TranslatedStrings.DiffSelectedWithRememberedFile, _rememberFileContextMenuController.RememberedDiffFileItem.Item.Name)
+            //        : string.Empty;
 
-            rememberFileStripMenuItem.Visible = isFile;
-            rememberFileStripMenuItem.Enabled = _rememberFileContextMenuController.ShouldEnableFirstItemDiff(fsi, isSecondRevision: true);
+            //rememberFileStripMenuItem.Visible = isFile;
+            //rememberFileStripMenuItem.Enabled = _rememberFileContextMenuController.ShouldEnableFirstItemDiff(fsi, isSecondRevision: true);
 
             openFileToolStripMenuItem.Visible = isFile;
-            openFileWithToolStripMenuItem.Visible = isFile;
+            //openFileWithToolStripMenuItem.Visible = isFile;
             saveAsToolStripMenuItem.Visible = isFile;
-            editCheckedOutFileToolStripMenuItem.Visible = isFile;
-            editCheckedOutFileToolStripMenuItem.Enabled = isExistingFileOrDirectory;
-            toolStripSeparatorFileSystemActions.Visible = isFile;
+            //editCheckedOutFileToolStripMenuItem.Visible = isFile;
+            //editCheckedOutFileToolStripMenuItem.Enabled = isExistingFileOrDirectory;
+            //toolStripSeparatorFileSystemActions.Visible = isFile;
 
-            copyFilenameToClipboardToolStripMenuItem.Visible = itemSelected;
+            //copyFilenameToClipboardToolStripMenuItem.Visible = itemSelected;
             fileTreeOpenContainingFolderToolStripMenuItem.Visible = itemSelected;
             fileTreeOpenContainingFolderToolStripMenuItem.Enabled = isExistingFileOrDirectory;
-            toolStripSeparatorFileNameActions.Visible = itemSelected;
+            //toolStripSeparatorFileNameActions.Visible = itemSelected;
 
             fileHistoryToolStripMenuItem.Enabled = itemSelected;
-            blameToolStripMenuItem1.Visible = isFile;
-            fileTreeArchiveToolStripMenuItem.Enabled = itemSelected;
-            fileTreeCleanWorkingTreeToolStripMenuItem.Visible = isFileOrFolder;
-            fileTreeCleanWorkingTreeToolStripMenuItem.Enabled = isExistingFileOrDirectory;
-            toolStripSeparatorGitActions.Visible = itemSelected;
+            //blameToolStripMenuItem1.Visible = isFile;
+            //fileTreeArchiveToolStripMenuItem.Enabled = itemSelected;
+            //fileTreeCleanWorkingTreeToolStripMenuItem.Visible = isFileOrFolder;
+            //fileTreeCleanWorkingTreeToolStripMenuItem.Enabled = isExistingFileOrDirectory;
+            //toolStripSeparatorGitActions.Visible = itemSelected;
 
             stopTrackingThisFileToolStripMenuItem.Visible = isFile;
             stopTrackingThisFileToolStripMenuItem.Enabled = isExistingFileOrDirectory;
             assumeUnchangedTheFileToolStripMenuItem.Visible = isFile;
             assumeUnchangedTheFileToolStripMenuItem.Enabled = isExistingFileOrDirectory;
-            toolStripSeparatorGitTrackingActions.Visible = isFile;
+            //toolStripSeparatorGitTrackingActions.Visible = isFile;
 
-            findToolStripMenuItem.Enabled = tvGitTree.Nodes.Count > 0;
-            expandToolStripMenuItem.Visible = isFolder;
-            collapseAllToolStripMenuItem.Visible = isFolder;
+            //findToolStripMenuItem.Enabled = tvGitTree.Nodes.Count > 0;
+            //expandToolStripMenuItem.Visible = isFolder;
+            //collapseAllToolStripMenuItem.Visible = isFolder;
         }
 
         private void fileTreeOpenContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1071,6 +1071,20 @@ See the changes in the commit form.");
         {
            // throw new NotImplementedException();
            FileHistory.ViewSelectedRevisions();
+        }
+        private void RemoveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void startTrackingThisFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void addFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
